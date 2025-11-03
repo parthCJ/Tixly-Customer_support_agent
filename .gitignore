@@ -1,0 +1,59 @@
+# Environment Variables (NEVER commit these!)
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Vector DB
+chroma_data/
+
+# Logs
+*.log
+logs/
+
+# ML Models (optional - commit if you want)
+models/*.h5
+models/*.pkl
+
+# Documentation (except README)
+*.md
+!README.md
+!COMPLETE_ARCHITECTURE.md
+!PHASE2_GUIDE.md

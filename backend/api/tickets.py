@@ -2,7 +2,7 @@
 Ticket Creation API Endpoint
 Handles incoming ticket creation requests from various sources
 """
-from fastapi import APIRouter, HTTPException, BackgroundTasks
+from fastapi import APIRouter, HTTPException, BackgroundTasks, Query
 from datetime import datetime
 import uuid
 from typing import Optional
@@ -16,6 +16,9 @@ from models.ticket import (
     TicketCategory
 )
 from services.ai_service import classify_ticket, generate_reply
+
+# Import agent management functions
+import api.agents as agents_api
 
 router = APIRouter(prefix="/api/tickets", tags=["tickets"])
 
@@ -144,6 +147,15 @@ async def create_ticket(
         # Store ticket
         tickets_db[ticket_id] = ticket
         
+        # Auto-assign to AGENT-001 for demo purposes
+        ticket.assigned_to = "AGENT-001"
+        
+        # Update agent's assigned tickets using agents API
+        try:
+            agents_api.assign_ticket_to_agent("AGENT-001", ticket_id)
+        except Exception as e:
+            print(f"Warning: Could not auto-assign to agent: {e}")
+        
         # Queue AI processing in background
         background_tasks.add_task(process_ticket_with_ai, ticket)
         
@@ -152,6 +164,7 @@ async def create_ticket(
             ticket=ticket,
             suggested_actions=[
                 "Ticket created successfully",
+                "Auto-assigned to AGENT-001",
                 "AI processing queued",
                 "Agent will be notified"
             ]
@@ -295,6 +308,8 @@ async def intercom_webhook(payload: dict, background_tasks: BackgroundTasks):
 async def update_ticket_status(ticket_id: str, status: TicketStatus):
     """
     Update ticket status
+    
+    When resolving/closing tickets, automatically decrements agent's current load
     """
     if ticket_id not in tickets_db:
         raise HTTPException(
@@ -303,8 +318,14 @@ async def update_ticket_status(ticket_id: str, status: TicketStatus):
         )
     
     ticket = tickets_db[ticket_id]
+    old_status = ticket.status
     ticket.status = status
     ticket.updated_at = datetime.utcnow()
+    
+    # If ticket is being resolved/closed, reduce agent's load
+    if status in [TicketStatus.RESOLVED, TicketStatus.CLOSED] and old_status not in [TicketStatus.RESOLVED, TicketStatus.CLOSED]:
+        if ticket.assigned_to:
+            agents_api.unassign_ticket_from_agent(ticket.assigned_to, ticket_id)
     
     if status == TicketStatus.RESOLVED:
         ticket.resolved_at = datetime.utcnow()
@@ -313,9 +334,23 @@ async def update_ticket_status(ticket_id: str, status: TicketStatus):
 
 
 @router.put("/{ticket_id}/assign")
-async def assign_ticket(ticket_id: str, agent_id: str, team: Optional[str] = None):
+async def assign_ticket(
+    ticket_id: str, 
+    agent_id: Optional[str] = Query(None, description="Specific agent ID to assign to"),
+    auto_assign: bool = Query(False, description="Automatically find best available agent"),
+    team: Optional[str] = None
+):
     """
     Assign ticket to an agent
+    
+    Two modes:
+    1. Manual assignment: Provide agent_id
+    2. Auto-assignment: Set auto_assign=true, system finds best agent
+    
+    Auto-assignment logic:
+    - Matches agent skills to ticket category
+    - Considers agent availability and current load
+    - Assigns to least busy qualified agent
     """
     if ticket_id not in tickets_db:
         raise HTTPException(
@@ -324,10 +359,111 @@ async def assign_ticket(ticket_id: str, agent_id: str, team: Optional[str] = Non
         )
     
     ticket = tickets_db[ticket_id]
+    
+    # Auto-assignment mode
+    if auto_assign:
+        best_agent = agents_api.find_best_agent_for_ticket(
+            category=ticket.category,
+            priority=ticket.priority.value if ticket.priority else None
+        )
+        
+        if not best_agent:
+            raise HTTPException(
+                status_code=404,
+                detail=f"No available agents found with skills for {ticket.category}"
+            )
+        
+        agent_id = best_agent.agent_id
+        
+        # Increment agent's load
+        agents_api.assign_ticket_to_agent(agent_id, ticket_id)
+        
+        ticket.assigned_to = agent_id
+        ticket.team = best_agent.team
+        ticket.status = TicketStatus.IN_PROGRESS
+        ticket.updated_at = datetime.utcnow()
+        
+        return {
+            "ticket": ticket,
+            "assignment": {
+                "mode": "auto",
+                "agent_id": best_agent.agent_id,
+                "agent_name": best_agent.name,
+                "agent_load": best_agent.current_load,
+                "message": f"Auto-assigned to {best_agent.name} (load: {best_agent.current_load}/{best_agent.max_tickets_per_day})"
+            }
+        }
+    
+    # Manual assignment mode
+    if not agent_id:
+        raise HTTPException(
+            status_code=400,
+            detail="Must provide agent_id or set auto_assign=true"
+        )
+    
+    # Check if agent exists and has capacity
+    agent = agents_api.get_agent_by_id(agent_id)
+    if not agent:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Agent {agent_id} not found"
+        )
+    
+    # Unassign from previous agent if reassigning
+    if ticket.assigned_to and ticket.assigned_to != agent_id:
+        agents_api.unassign_ticket_from_agent(ticket.assigned_to, ticket_id)
+    
+    # Assign to new agent
+    agents_api.assign_ticket_to_agent(agent_id, ticket_id)
+    
     ticket.assigned_to = agent_id
     if team:
         ticket.team = team
+    else:
+        ticket.team = agent.team
     ticket.status = TicketStatus.IN_PROGRESS
     ticket.updated_at = datetime.utcnow()
     
-    return ticket
+    return {
+        "ticket": ticket,
+        "assignment": {
+            "mode": "manual",
+            "agent_id": agent.agent_id,
+            "agent_name": agent.name,
+            "agent_load": agent.current_load,
+            "message": f"Assigned to {agent.name} (load: {agent.current_load}/{agent.max_tickets_per_day})"
+        }
+    }
+
+
+@router.put("/{ticket_id}/unassign")
+async def unassign_ticket(ticket_id: str):
+    """
+    Remove agent assignment from a ticket
+    """
+    if ticket_id not in tickets_db:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Ticket {ticket_id} not found"
+        )
+    
+    ticket = tickets_db[ticket_id]
+    
+    # Decrement agent's load if assigned
+    if ticket.assigned_to:
+        agents_api.unassign_ticket_from_agent(ticket.assigned_to, ticket_id)
+        previous_agent = ticket.assigned_to
+        ticket.assigned_to = None
+        ticket.status = TicketStatus.NEW
+        ticket.updated_at = datetime.utcnow()
+        
+        return {
+            "ticket": ticket,
+            "message": f"Unassigned from {previous_agent}"
+        }
+    
+    return {
+        "ticket": ticket,
+        "message": "Ticket was not assigned"
+    }
+

@@ -212,24 +212,33 @@ Do not include a signature or greeting (that will be added automatically).
     def _normalize_classification(self, result: Dict[str, Any]) -> Dict[str, Any]:
         """Normalize and validate the AI classification result"""
         
-        # Valid categories
-        valid_categories = [
-            "SHIPPING", "BILLING", "PRODUCT", "ACCOUNT", 
-            "TECHNICAL", "REFUND", "GENERAL", "OTHER"
-        ]
+        # Map AI categories to our enum values
+        category_mapping = {
+            "SHIPPING": "shipping_delay",
+            "BILLING": "billing_issue",
+            "PRODUCT": "product_defect",
+            "ACCOUNT": "account_access",
+            "TECHNICAL": "technical_support",
+            "REFUND": "refund_request",
+            "GENERAL": "general_inquiry",
+            "OTHER": "other"
+        }
         
-        # Valid priorities
-        valid_priorities = ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
+        # Map priorities to lowercase (enum values)
+        priority_mapping = {
+            "LOW": "low",
+            "MEDIUM": "medium",
+            "HIGH": "high",
+            "CRITICAL": "critical"
+        }
         
         # Normalize category
-        category = result.get("category", "GENERAL").upper()
-        if category not in valid_categories:
-            category = "GENERAL"
+        category_upper = result.get("category", "GENERAL").upper()
+        category = category_mapping.get(category_upper, "general_inquiry")
         
         # Normalize priority
-        priority = result.get("priority", "MEDIUM").upper()
-        if priority not in valid_priorities:
-            priority = "MEDIUM"
+        priority_upper = result.get("priority", "MEDIUM").upper()
+        priority = priority_mapping.get(priority_upper, "medium")
         
         # Normalize sentiment
         sentiment = result.get("sentiment", "neutral").lower()

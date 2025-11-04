@@ -1,6 +1,6 @@
 # 🤖 AI-Powered Customer Support Platform# Customer Support Copilot - Ticket Creation Workflow
 
-
+Video OverView: https://drive.google.com/file/d/1fyeg-WjjwA7B6Ue7DKvUjaqdglc-gSj5/view?usp=sharing
 
 > Intelligent ticket management system with AI classification, automated reply suggestions, and predictive analytics## 🎯 Phase 1: Foundation - Ticket Creation
 

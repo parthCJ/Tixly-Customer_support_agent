@@ -31,6 +31,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         draggable
         pauseOnHover
         theme="light"
+        aria-label="Notifications"
       />
     </QueryClientProvider>
   );

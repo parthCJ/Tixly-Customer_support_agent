@@ -57,11 +57,11 @@ export default function MyTicketsPage() {
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-xs font-mono text-gray-500">{ticket.ticket_id}</span>
-              <Badge variant={getPriorityColor(ticket.ai_classification?.priority || ticket.priority)} size="sm">
-                {ticket.ai_classification?.priority || ticket.priority}
+              <Badge variant={getPriorityColor((ticket.ai_classification?.priority || ticket.priority) as string)} size="sm">
+                {ticket.ai_classification?.priority || ticket.priority || 'medium'}
               </Badge>
-              <Badge variant={getCategoryColor(ticket.ai_classification?.category || ticket.category)} size="sm">
-                {ticket.ai_classification?.category || ticket.category}
+              <Badge variant={getCategoryColor((ticket.ai_classification?.category || ticket.category) as string)} size="sm">
+                {ticket.ai_classification?.category || ticket.category || 'general_inquiry'}
               </Badge>
             </div>
             <h3 className="font-semibold text-gray-900 dark:text-white mb-1">

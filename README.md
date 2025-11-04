@@ -24,7 +24,8 @@ A ticket creation system that:
 
 2. **Validates** and structures the data
 
-## ✨ Key Features3. **Generates** unique ticket IDs
+## ✨ Key Features. **Generates** unique ticket IDs
+
 
 4. **Stores** tickets for processing
 

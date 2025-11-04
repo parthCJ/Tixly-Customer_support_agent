@@ -33,4 +33,4 @@ numpy<2.0  # For ChromaDB compatibility
 # Utilities
 python-dotenv==1.0.0
 python-multipart==0.0.6
-email-validator==2.1.0  # For Pydantic EmailStr validation
+email-validator==2.1.1  # For Pydantic EmailStr validation

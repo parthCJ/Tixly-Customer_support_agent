@@ -26,21 +26,40 @@ export default function SubmitTicketPage() {
       console.log('Submitting to:', `${API_URL}/api/tickets/create`);
       console.log('Form data:', formData);
       
-      const response = await axios.post(`${API_URL}/api/tickets/create`, {
-        ...formData,
-        source: 'web',
-      });
+      const response = await axios.post(
+        `${API_URL}/api/tickets/create`, 
+        {
+          ...formData,
+          source: 'web',
+        },
+        {
+          timeout: 60000, // 60 second timeout for cold starts
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
 
       console.log('Response:', response.data);
       toast.success('Ticket submitted successfully!');
       
       // Redirect to success page with ticket ID
-      router.push(`/submit-ticket/success?ticket_id=${response.data.ticket.ticket_id}`);
+      const ticketId = response.data.ticket.ticket_id;
+      console.log('Redirecting to success page with ticket ID:', ticketId);
+      router.push(`/submit-ticket/success?ticket_id=${ticketId}`);
     } catch (error: any) {
       console.error('Error submitting ticket:', error);
       console.error('Error response:', error.response?.data);
       console.error('Error status:', error.response?.status);
-      toast.error(error.response?.data?.detail || 'Failed to submit ticket. Please try again.');
+      console.error('Error message:', error.message);
+      
+      if (error.code === 'ECONNABORTED') {
+        toast.error('Request timeout - backend may be waking up. Please try again in 30 seconds.');
+      } else if (error.response?.status === 0 || error.message.includes('Network Error')) {
+        toast.error(`Cannot connect to backend. Using: ${API_URL}`);
+      } else {
+        toast.error(error.response?.data?.detail || 'Failed to submit ticket. Please try again.');
+      }
     } finally {
       setLoading(false);
     }

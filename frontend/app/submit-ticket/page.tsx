@@ -59,7 +59,7 @@ export default function SubmitTicketPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            🤖 AI Support Copilot
+            AI Support Copilot
           </h1>
           <p className="text-lg text-gray-600">
             Submit your support ticket and get instant AI-powered assistance
@@ -81,7 +81,7 @@ export default function SubmitTicketPage() {
                 required
                 value={formData.customer_name}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-gray-900"
                 placeholder="John Doe"
               />
             </div>
@@ -98,7 +98,7 @@ export default function SubmitTicketPage() {
                 required
                 value={formData.customer_email}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-gray-900"
                 placeholder="john@example.com"
               />
             </div>
@@ -115,7 +115,7 @@ export default function SubmitTicketPage() {
                 required
                 value={formData.subject}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-gray-900"
                 placeholder="What can we help you with?"
               />
             </div>
@@ -132,7 +132,7 @@ export default function SubmitTicketPage() {
                 value={formData.description}
                 onChange={handleChange}
                 rows={5}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition resize-none"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition resize-none text-gray-900"
                 placeholder="Please describe your issue in detail..."
               />
             </div>
@@ -148,7 +148,7 @@ export default function SubmitTicketPage() {
                 name="order_id"
                 value={formData.order_id}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-gray-900"
                 placeholder="e.g., ORD-12345"
               />
             </div>

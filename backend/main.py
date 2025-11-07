@@ -43,32 +43,46 @@ async def startup_event():
     Initialize services and sample agents on startup for testing/demo
     """
     global ai_service, kb_service
+    import os
     
     print("🚀 Starting Customer Support Copilot...")
     
-    # Initialize AI and KB services (these are slow, so do it once at startup)
-    print("🔄 Initializing AI services...")
-    from services.ai_service import TicketAIService
-    from services.kb_service import KnowledgeBaseService
+    # Check if running on Render (or other production env)
+    is_production = os.getenv("RENDER") or os.getenv("PORT")
     
-    try:
-        ai_service = TicketAIService()
-        print("✅ AI Service initialized")
-    except Exception as e:
-        print(f"⚠️  AI Service initialization failed: {e}")
-        ai_service = None
-    
-    try:
-        kb_service = KnowledgeBaseService()
-        print("✅ Knowledge Base Service initialized")
+    if is_production:
+        print("⚡ Production mode: Deferring AI service initialization for fast startup")
+        print("   AI services will load on first ticket creation")
+        # Services will be initialized lazily on first use
+    else:
+        # Local development: Load everything upfront for better DX
+        print("🔄 Initializing AI services...")
+        from services.ai_service import TicketAIService
+        from services.kb_service import KnowledgeBaseService
         
-        # Load sample KB articles
-        from data.sample_kb_articles import SAMPLE_ARTICLES
-        if kb_service.collection.count() == 0:
-            print("📚 Loading sample knowledge base articles...")
-            kb_service.add_articles_bulk(SAMPLE_ARTICLES)
-    except Exception as e:
-        print(f"⚠️  KB Service initialization failed: {e}")
+        try:
+            ai_service = TicketAIService()
+            print("✅ AI Service initialized")
+        except Exception as e:
+            print(f"⚠️  AI Service initialization failed: {e}")
+            ai_service = None
+        
+        try:
+            kb_service = KnowledgeBaseService()
+            print("✅ Knowledge Base Service initialized")
+            
+            # Load sample KB articles
+            from data.sample_kb_articles import SAMPLE_ARTICLES
+            if kb_service.collection.count() == 0:
+                print("📚 Loading sample knowledge base articles...")
+                kb_service.add_articles_bulk(SAMPLE_ARTICLES)
+        except Exception as e:
+            print(f"⚠️  KB Service initialization failed: {e}")
+            kb_service = None
+        
+        # Make services available to routers
+        tickets.ai_service = ai_service
+        tickets.kb_service = kb_service
         kb_service = None
     
     # Make services available to routers

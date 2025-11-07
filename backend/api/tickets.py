@@ -33,22 +33,30 @@ kb_service = None
 def ensure_services_initialized():
     """
     Lazy initialization of AI services (for production fast startup)
+    Gracefully handles missing dependencies for demo deployments
     """
     global ai_service, kb_service
     
     if ai_service is None or kb_service is None:
         print("🔄 Lazy loading AI services on first request...")
-        from services.ai_service import TicketAIService
-        from services.kb_service import KnowledgeBaseService
         
         try:
+            from services.ai_service import TicketAIService
+            from services.kb_service import KnowledgeBaseService
+            
             if ai_service is None:
                 ai_service = TicketAIService()
                 print("✅ AI Service initialized")
+        except ImportError as e:
+            print(f"⚠️  AI Service not available (missing dependencies): {e}")
+            ai_service = "unavailable"  # Mark as unavailable instead of None
         except Exception as e:
             print(f"⚠️  AI Service initialization failed: {e}")
+            ai_service = "unavailable"
         
         try:
+            from services.kb_service import KnowledgeBaseService
+            
             if kb_service is None:
                 kb_service = KnowledgeBaseService()
                 print("✅ Knowledge Base Service initialized")
@@ -58,6 +66,12 @@ def ensure_services_initialized():
                 if kb_service.collection.count() == 0:
                     print("📚 Loading sample knowledge base articles...")
                     kb_service.add_articles_bulk(SAMPLE_ARTICLES)
+        except ImportError as e:
+            print(f"⚠️  KB Service not available (missing dependencies): {e}")
+            kb_service = "unavailable"
+        except Exception as e:
+            print(f"⚠️  KB Service initialization failed: {e}")
+            kb_service = "unavailable"
         except Exception as e:
             print(f"⚠️  KB Service initialization failed: {e}")
 
@@ -95,23 +109,31 @@ async def process_ticket_with_ai(ticket: Ticket):
         ensure_services_initialized()
         
         # Check if AI service is available
-        if not ai_service:
-            print("⚠️  AI service not available, skipping AI processing")
-            return
-        
-        # Prepare metadata for AI
-        metadata = {
-            "order_id": ticket.order_id,
-            "customer_name": ticket.customer_name,
-            "source": ticket.source
-        }
-        
-        # Classify the ticket using the pre-initialized service
-        classification = ai_service.classify_ticket(
-            subject=ticket.subject,
-            description=ticket.description,
-            metadata=metadata
-        )
+        if not ai_service or ai_service == "unavailable":
+            print("⚠️  AI service not available, using mock classification")
+            # Use mock classification for demo
+            classification = {
+                "category": "general_inquiry",
+                "priority": "medium",
+                "confidence": 0.8,
+                "sentiment": "neutral",
+                "urgency_keywords": [],
+                "extracted_info": {}
+            }
+        else:
+            # Prepare metadata for AI
+            metadata = {
+                "order_id": ticket.order_id,
+                "customer_name": ticket.customer_name,
+                "source": ticket.source
+            }
+            
+            # Classify the ticket using the pre-initialized service
+            classification = ai_service.classify_ticket(
+                subject=ticket.subject,
+                description=ticket.description,
+                metadata=metadata
+            )
         
         # Update ticket with AI results
         ticket.ai_suggested_category = classification["category"]
@@ -139,7 +161,7 @@ async def process_ticket_with_ai(ticket: Ticket):
         
         # Search KB for context if kb_service is available
         kb_context = None
-        if kb_service:
+        if kb_service and kb_service != "unavailable":
             try:
                 kb_articles = kb_service.search(
                     query=ticket.description,
@@ -154,8 +176,13 @@ async def process_ticket_with_ai(ticket: Ticket):
             except Exception as e:
                 print(f"   ⚠️  KB search failed: {e}")
         
-        suggested_reply = ai_service.generate_suggested_reply(ticket_data, kb_context)
-        ticket.ai_suggested_reply = suggested_reply
+        # Generate suggested reply
+        if ai_service and ai_service != "unavailable":
+            suggested_reply = ai_service.generate_suggested_reply(ticket_data, kb_context)
+            ticket.ai_suggested_reply = suggested_reply
+        else:
+            # Mock reply for demo
+            ticket.ai_suggested_reply = f"Thank you for contacting us regarding: {ticket.subject}. We're looking into this matter and will get back to you shortly."
         
         # Update the ticket in storage
         tickets_db[ticket.ticket_id] = ticket

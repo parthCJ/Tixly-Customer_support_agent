@@ -11,7 +11,8 @@ import type {
   TicketStatus
 } from '@/types';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+// Remove trailing slash from API URL to prevent double slashes
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000').replace(/\/$/, '');
 
 console.log('🔧 API Base URL:', API_BASE_URL);
 

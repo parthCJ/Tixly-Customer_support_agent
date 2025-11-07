@@ -34,6 +34,20 @@ app.include_router(agents.router)
 
 
 # ============================================================================
+# Health Check Endpoint
+# ============================================================================
+
+@app.get("/health")
+async def health_check():
+    """Simple health check that doesn't require AI services"""
+    return {
+        "status": "healthy",
+        "service": "Customer Support Copilot",
+        "timestamp": datetime.now().isoformat()
+    }
+
+
+# ============================================================================
 # Startup Event - Initialize Sample Data
 # ============================================================================
 

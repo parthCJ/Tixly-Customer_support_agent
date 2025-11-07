@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException, BackgroundTasks, Query
 from datetime import datetime
 import uuid
 from typing import Optional
+from pydantic import BaseModel
 
 from models.ticket import (
     Ticket,
@@ -15,7 +16,6 @@ from models.ticket import (
     TicketPriority,
     TicketCategory
 )
-from services.ai_service import classify_ticket, generate_reply
 
 # Import agent management functions
 import api.agents as agents_api
@@ -24,6 +24,15 @@ router = APIRouter(prefix="/api/tickets", tags=["tickets"])
 
 # In-memory storage for demo (replace with database in production)
 tickets_db = {}
+
+# Global service instances (set by main.py on startup)
+ai_service = None
+kb_service = None
+
+
+# Request models
+class StatusUpdateRequest(BaseModel):
+    status: TicketStatus
 
 
 def generate_ticket_id() -> str:
@@ -50,6 +59,11 @@ async def process_ticket_with_ai(ticket: Ticket):
     try:
         print(f"🤖 Processing ticket {ticket.ticket_id} with AI...")
         
+        # Check if AI service is available
+        if not ai_service:
+            print("⚠️  AI service not available, skipping AI processing")
+            return
+        
         # Prepare metadata for AI
         metadata = {
             "order_id": ticket.order_id,
@@ -57,8 +71,8 @@ async def process_ticket_with_ai(ticket: Ticket):
             "source": ticket.source
         }
         
-        # Classify the ticket
-        classification = classify_ticket(
+        # Classify the ticket using the pre-initialized service
+        classification = ai_service.classify_ticket(
             subject=ticket.subject,
             description=ticket.description,
             metadata=metadata
@@ -80,7 +94,7 @@ async def process_ticket_with_ai(ticket: Ticket):
         else:
             print(f"   ⚠️  Low confidence ({classification['confidence']:.2f}), keeping defaults")
         
-        # Generate suggested reply
+        # Generate suggested reply using the pre-initialized service
         ticket_data = {
             "subject": ticket.subject,
             "description": ticket.description,
@@ -88,7 +102,24 @@ async def process_ticket_with_ai(ticket: Ticket):
             "priority": ticket.priority.value
         }
         
-        suggested_reply = generate_reply(ticket_data)
+        # Search KB for context if kb_service is available
+        kb_context = None
+        if kb_service:
+            try:
+                kb_articles = kb_service.search(
+                    query=ticket.description,
+                    n_results=2,
+                    category_filter=ticket.category.value if ticket.category else None
+                )
+                if kb_articles:
+                    kb_context = "\n\n".join([
+                        f"KB Article: {article['title']}\n{article['content'][:500]}..."
+                        for article in kb_articles[:2]
+                    ])
+            except Exception as e:
+                print(f"   ⚠️  KB search failed: {e}")
+        
+        suggested_reply = ai_service.generate_suggested_reply(ticket_data, kb_context)
         ticket.ai_suggested_reply = suggested_reply
         
         # Update the ticket in storage
@@ -305,7 +336,10 @@ async def intercom_webhook(payload: dict, background_tasks: BackgroundTasks):
 
 
 @router.put("/{ticket_id}/status")
-async def update_ticket_status(ticket_id: str, status: TicketStatus):
+async def update_ticket_status(
+    ticket_id: str,
+    status: TicketStatus = Query(..., description="New status for the ticket")
+):
     """
     Update ticket status
     

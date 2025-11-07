@@ -12,9 +12,12 @@ import { Ticket, TicketStatus } from '@/types';
 
 export default function MyTicketsPage() {
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
-  const { data: tickets = [], isLoading } = useQuery({
+  const { data: tickets = [], isLoading, error } = useQuery({
     queryKey: ['my-tickets'],
     queryFn: () => ticketsApi.getAll(),
+    staleTime: 10000, // Data stays fresh for 10 seconds (reduces refetches)
+    refetchInterval: 30000, // Auto-refetch every 30 seconds
+    retry: 2, // Retry failed requests twice
   });
 
   // Filter tickets assigned to current agent (AGENT-001 for demo)
@@ -24,6 +27,58 @@ export default function MyTicketsPage() {
   const newTickets = myTickets.filter(t => t.status === TicketStatus.NEW);
   const inProgressTickets = myTickets.filter(t => t.status === TicketStatus.IN_PROGRESS);
   const resolvedTickets = myTickets.filter(t => t.status === TicketStatus.RESOLVED);
+
+  // Loading state with skeleton
+  if (isLoading) {
+    return (
+      <div className="p-6 space-y-6">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-1/4 mb-2"></div>
+          <div className="h-4 bg-gray-200 rounded w-1/3 mb-6"></div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="bg-white dark:bg-gray-800 rounded-lg p-4">
+                <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+                <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="space-y-4">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="bg-white dark:bg-gray-800 rounded-lg p-4 h-32"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="p-6">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
+            <h3 className="font-semibold text-red-900 dark:text-red-100">Failed to load tickets</h3>
+          </div>
+          <p className="text-red-700 dark:text-red-300 text-sm">
+            {error instanceof Error ? error.message : 'An error occurred while fetching tickets'}
+          </p>
+          <Button 
+            onClick={() => window.location.reload()} 
+            variant="secondary" 
+            size="sm"
+            className="mt-3"
+          >
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -121,14 +176,6 @@ export default function MyTicketsPage() {
       </div>
     </Card>
   );
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="p-6 space-y-6">

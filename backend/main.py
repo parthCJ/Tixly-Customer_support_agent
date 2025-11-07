@@ -14,6 +14,10 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# Global service instances (initialized at startup)
+ai_service = None
+kb_service = None
+
 # Configure CORS (allow frontend to connect)
 app.add_middleware(
     CORSMiddleware,
@@ -36,8 +40,41 @@ app.include_router(agents.router)
 @app.on_event("startup")
 async def startup_event():
     """
-    Initialize sample agents on startup for testing/demo
+    Initialize services and sample agents on startup for testing/demo
     """
+    global ai_service, kb_service
+    
+    print("🚀 Starting Customer Support Copilot...")
+    
+    # Initialize AI and KB services (these are slow, so do it once at startup)
+    print("🔄 Initializing AI services...")
+    from services.ai_service import TicketAIService
+    from services.kb_service import KnowledgeBaseService
+    
+    try:
+        ai_service = TicketAIService()
+        print("✅ AI Service initialized")
+    except Exception as e:
+        print(f"⚠️  AI Service initialization failed: {e}")
+        ai_service = None
+    
+    try:
+        kb_service = KnowledgeBaseService()
+        print("✅ Knowledge Base Service initialized")
+        
+        # Load sample KB articles
+        from data.sample_kb_articles import SAMPLE_ARTICLES
+        if kb_service.collection.count() == 0:
+            print("📚 Loading sample knowledge base articles...")
+            kb_service.add_articles_bulk(SAMPLE_ARTICLES)
+    except Exception as e:
+        print(f"⚠️  KB Service initialization failed: {e}")
+        kb_service = None
+    
+    # Make services available to routers
+    tickets.ai_service = ai_service
+    tickets.kb_service = kb_service
+    
     from models.agent import Agent, AgentStatus
     
     # Create sample agents

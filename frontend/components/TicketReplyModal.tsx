@@ -22,12 +22,18 @@ export function TicketReplyModal({ ticket, onClose }: TicketReplyModalProps) {
   // Mutation for updating ticket status
   const resolveTicketMutation = useMutation({
     mutationFn: async () => {
+      console.log('Updating ticket status:', ticket.ticket_id, 'to:', TicketStatus.RESOLVED);
       return ticketsApi.updateStatus(ticket.ticket_id, TicketStatus.RESOLVED);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tickets'] });
       queryClient.invalidateQueries({ queryKey: ['my-tickets'] });
       queryClient.invalidateQueries({ queryKey: ['agent-stats'] });
+    },
+    onError: (error: any) => {
+      console.error('Failed to resolve ticket:', error);
+      console.error('Error response:', error.response?.data);
+      toast.error(`Failed to resolve ticket: ${error.response?.data?.detail || error.message}`);
     },
   });
 

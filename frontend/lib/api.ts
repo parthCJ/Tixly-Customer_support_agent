@@ -18,7 +18,21 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 10000, // 10 second timeout for API calls
 });
+
+// Add response interceptor for better error handling
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.code === 'ECONNABORTED') {
+      console.error('Request timeout - backend may be slow');
+    } else if (error.response?.status === 500) {
+      console.error('Server error:', error.response.data);
+    }
+    return Promise.reject(error);
+  }
+);
 
 // ============================================================================
 // Tickets API
@@ -50,9 +64,7 @@ export const ticketsApi = {
 
   // Update ticket status
   updateStatus: async (ticketId: string, status: TicketStatus): Promise<Ticket> => {
-    const response = await api.put(`/api/tickets/${ticketId}/status`, null, {
-      params: { status },
-    });
+    const response = await api.put(`/api/tickets/${ticketId}/status?status=${status}`);
     return response.data;
   },
 

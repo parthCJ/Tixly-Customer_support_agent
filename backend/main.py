@@ -37,17 +37,13 @@ app.include_router(agents.router)
 # Startup Event - Initialize Sample Data
 # ============================================================================
 
-@app.on_event("startup")
-async def startup_event():
+def init_services():
     """
-    Initialize services and sample agents on startup for testing/demo
+    Initialize AI services in background (called after server starts)
     """
     global ai_service, kb_service
     
-    print("🚀 Starting Customer Support Copilot...")
-    
-    # Initialize AI and KB services (these are slow, so do it once at startup)
-    print("🔄 Initializing AI services...")
+    print("� Initializing AI services in background...")
     from services.ai_service import TicketAIService
     from services.kb_service import KnowledgeBaseService
     
@@ -74,6 +70,20 @@ async def startup_event():
     # Make services available to routers
     tickets.ai_service = ai_service
     tickets.kb_service = kb_service
+    print("✅ All services ready!")
+
+
+@app.on_event("startup")
+async def startup_event():
+    """
+    Quick startup - initialize sample agents, defer heavy AI loading
+    """
+    import asyncio
+    
+    print("🚀 Starting Customer Support Copilot...")
+    
+    # Start AI services initialization in background (non-blocking)
+    asyncio.create_task(asyncio.to_thread(init_services))
     
     from models.agent import Agent, AgentStatus
     
@@ -182,7 +192,9 @@ async def health_check():
         "status": "healthy",
         "timestamp": datetime.utcnow().isoformat(),
         "agents_count": len(agents.agents_db),
-        "tickets_count": len(tickets.tickets_db)
+        "tickets_count": len(tickets.tickets_db),
+        "ai_service_ready": ai_service is not None,
+        "kb_service_ready": kb_service is not None
     }
 
 

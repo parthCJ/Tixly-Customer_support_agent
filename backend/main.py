@@ -204,21 +204,6 @@ async def root():
     }
 
 
-@app.get("/health")
-async def health_check():
-    """
-    Health check endpoint for monitoring
-    """
-    return {
-        "status": "healthy",
-        "timestamp": datetime.utcnow().isoformat(),
-        "agents_count": len(agents.agents_db),
-        "tickets_count": len(tickets.tickets_db),
-        "ai_service_ready": ai_service is not None,
-        "kb_service_ready": kb_service is not None
-    }
-
-
 if __name__ == "__main__":
     import uvicorn
     import os

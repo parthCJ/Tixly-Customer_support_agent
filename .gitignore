@@ -55,5 +55,3 @@ models/*.pkl
 # Documentation (except README)
 *.md
 !README.md
-!COMPLETE_ARCHITECTURE.md
-!PHASE2_GUIDE.md

@@ -20,6 +20,7 @@ export function TicketReplyModal({ ticket, onClose }: TicketReplyModalProps) {
   const queryClient = useQueryClient();
 
   // Mutation for updating ticket status
+  // uses the optimistic updates so that UI updates immediatly before API call to POST ex changes the Status from new -> Resolved.
   const resolveTicketMutation = useMutation({
     mutationFn: async () => {
       console.log('Updating ticket status:', ticket.ticket_id, 'to:', TicketStatus.RESOLVED);

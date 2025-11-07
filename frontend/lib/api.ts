@@ -13,6 +13,8 @@ import type {
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
+console.log('🔧 API Base URL:', API_BASE_URL);
+
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -21,14 +23,33 @@ const api = axios.create({
   timeout: 10000, // 10 second timeout for API calls
 });
 
+// Add request interceptor for debugging
+api.interceptors.request.use(
+  (config) => {
+    console.log('📤 API Request:', config.method?.toUpperCase(), config.url);
+    return config;
+  },
+  (error) => {
+    console.error('❌ Request setup error:', error);
+    return Promise.reject(error);
+  }
+);
+
 // Add response interceptor for better error handling
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log('✅ API Response:', response.config.url, response.status);
+    return response;
+  },
   (error) => {
     if (error.code === 'ECONNABORTED') {
-      console.error('Request timeout - backend may be slow');
+      console.error('⏱️ Request timeout - backend may be slow');
+      console.error('   URL:', error.config?.url);
+      console.error('   Timeout:', error.config?.timeout, 'ms');
     } else if (error.response?.status === 500) {
-      console.error('Server error:', error.response.data);
+      console.error('🔥 Server error:', error.response.data);
+    } else if (!error.response) {
+      console.error('🔌 Network error - backend not reachable:', error.message);
     }
     return Promise.reject(error);
   }

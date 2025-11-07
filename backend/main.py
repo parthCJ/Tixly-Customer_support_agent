@@ -21,8 +21,12 @@ kb_service = None
 # Configure CORS (allow frontend to connect)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify your frontend URL
-    allow_credentials=True,
+    allow_origins=[
+        "http://localhost:3000",  # Local development
+        "https://tixly-customer-support-agent.vercel.app",  # Vercel deployment
+        "https://*.vercel.app",  # All Vercel preview deployments
+    ],
+    allow_credentials=False,  # Set to False when using specific origins
     allow_methods=["*"],
     allow_headers=["*"],
 )

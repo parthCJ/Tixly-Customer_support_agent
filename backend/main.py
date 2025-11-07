@@ -18,11 +18,11 @@ app = FastAPI(
 ai_service = None
 kb_service = None
 
-# Configure CORS (allow frontend to connect)
+# Configure CORS - Simple localhost only
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins temporarily to debug
-    allow_credentials=False,  # Must be False when using "*"
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -54,50 +54,39 @@ async def health_check():
 @app.on_event("startup")
 async def startup_event():
     """
-    Initialize services and sample agents on startup for testing/demo
+    Initialize services and sample agents on startup
     """
     global ai_service, kb_service
-    import os
     
     print("🚀 Starting Customer Support Copilot...")
+    print("🔄 Initializing AI services...")
     
-    # Check if running on Render (or other production env)
-    is_production = os.getenv("RENDER") or os.getenv("PORT")
+    from services.ai_service import TicketAIService
+    from services.kb_service import KnowledgeBaseService
     
-    if is_production:
-        print("⚡ Production mode: Deferring AI service initialization for fast startup")
-        print("   AI services will load on first ticket creation")
-        # Services will be initialized lazily on first use
-    else:
-        # Local development: Load everything upfront for better DX
-        print("🔄 Initializing AI services...")
-        from services.ai_service import TicketAIService
-        from services.kb_service import KnowledgeBaseService
+    try:
+        ai_service = TicketAIService()
+        print("✅ AI Service initialized")
+    except Exception as e:
+        print(f"⚠️  AI Service initialization failed: {e}")
+        ai_service = None
+    
+    try:
+        kb_service = KnowledgeBaseService()
+        print("✅ Knowledge Base Service initialized")
         
-        try:
-            ai_service = TicketAIService()
-            print("✅ AI Service initialized")
-        except Exception as e:
-            print(f"⚠️  AI Service initialization failed: {e}")
-            ai_service = None
-        
-        try:
-            kb_service = KnowledgeBaseService()
-            print("✅ Knowledge Base Service initialized")
-            
-            # Load sample KB articles
-            from data.sample_kb_articles import SAMPLE_ARTICLES
-            if kb_service.collection.count() == 0:
-                print("📚 Loading sample knowledge base articles...")
-                kb_service.add_articles_bulk(SAMPLE_ARTICLES)
-        except Exception as e:
-            print(f"⚠️  KB Service initialization failed: {e}")
-            kb_service = None
-        
-        # Make services available to routers
-        tickets.ai_service = ai_service
-        tickets.kb_service = kb_service
+        # Load sample KB articles
+        from data.sample_kb_articles import SAMPLE_ARTICLES
+        if kb_service.collection.count() == 0:
+            print("📚 Loading sample knowledge base articles...")
+            kb_service.add_articles_bulk(SAMPLE_ARTICLES)
+    except Exception as e:
+        print(f"⚠️  KB Service initialization failed: {e}")
         kb_service = None
+    
+    # Make services available to routers
+    tickets.ai_service = ai_service
+    tickets.kb_service = kb_service
     
     # Make services available to routers
     tickets.ai_service = ai_service

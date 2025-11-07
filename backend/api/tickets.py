@@ -30,38 +30,6 @@ ai_service = None
 kb_service = None
 
 
-def ensure_services_initialized():
-    """
-    Lazy initialization of AI services (for production fast startup)
-    """
-    global ai_service, kb_service
-    
-    if ai_service is None or kb_service is None:
-        print("🔄 Lazy loading AI services on first request...")
-        from services.ai_service import TicketAIService
-        from services.kb_service import KnowledgeBaseService
-        
-        try:
-            if ai_service is None:
-                ai_service = TicketAIService()
-                print("✅ AI Service initialized")
-        except Exception as e:
-            print(f"⚠️  AI Service initialization failed: {e}")
-        
-        try:
-            if kb_service is None:
-                kb_service = KnowledgeBaseService()
-                print("✅ Knowledge Base Service initialized")
-                
-                # Load sample KB articles
-                from data.sample_kb_articles import SAMPLE_ARTICLES
-                if kb_service.collection.count() == 0:
-                    print("📚 Loading sample knowledge base articles...")
-                    kb_service.add_articles_bulk(SAMPLE_ARTICLES)
-        except Exception as e:
-            print(f"⚠️  KB Service initialization failed: {e}")
-
-
 # Request models
 class StatusUpdateRequest(BaseModel):
     status: TicketStatus
@@ -90,9 +58,6 @@ async def process_ticket_with_ai(ticket: Ticket):
     """
     try:
         print(f"🤖 Processing ticket {ticket.ticket_id} with AI...")
-        
-        # Ensure services are loaded (lazy init for production)
-        ensure_services_initialized()
         
         # Check if AI service is available
         if not ai_service:

@@ -21,11 +21,11 @@ groq==0.9.0
 httpx==0.24.1
 
 # Vector Database & Embeddings (Phase 3 - RAG)
-# chromadb==0.4.22  # Temporarily disabled for faster deployment
-# sentence-transformers==2.3.1  # Temporarily disabled for faster deployment
+chromadb==0.4.22
+sentence-transformers==2.3.1
 
 # ML/Forecasting (Phase 4 - LSTM)
-# tensorflow==2.15.0  # Temporarily disabled for faster deployment (800MB+)
+tensorflow==2.15.0
 pandas==2.1.4
 scikit-learn==1.3.2
 numpy<2.0  # For ChromaDB compatibility

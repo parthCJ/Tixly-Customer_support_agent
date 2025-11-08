@@ -101,7 +101,7 @@ function SuccessContent() {
         {/* Info Box */}
         <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
           <p className="text-sm text-blue-800">
-            <strong>📧 Check your email</strong> - We've sent a confirmation to your inbox with your ticket details.
+            <strong>Check your email</strong> - We've sent a confirmation to your inbox with your ticket details.
           </p>
         </div>
       </div>

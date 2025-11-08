@@ -5,7 +5,7 @@ Entry point for the Customer Support Copilot backend
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
-from api import tickets, forecasting, agents
+from .api import tickets, forecasting, agents
 from datetime import datetime
 
 # Create FastAPI app

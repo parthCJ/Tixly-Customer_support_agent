@@ -12,7 +12,13 @@ import type {
 } from '@/types';
 
 // Remove trailing slash from API URL to prevent double slashes
-const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000').replace(/\/$/, '');
+let API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000').replace(/\/$/, '');
+
+// Force HTTPS for production deployments (prevent mixed content errors)
+if (API_BASE_URL.includes('.hf.space') && API_BASE_URL.startsWith('http://')) {
+  API_BASE_URL = API_BASE_URL.replace('http://', 'https://');
+  console.warn('⚠️  Forcing HTTPS for HF Space URL');
+}
 
 console.log('🔧 API Base URL:', API_BASE_URL);
 

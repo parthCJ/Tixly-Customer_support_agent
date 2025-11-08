@@ -8,7 +8,7 @@ import uuid
 from typing import Optional
 from pydantic import BaseModel
 
-from models.ticket import (
+from ..models.ticket import (
     Ticket,
     TicketCreateRequest,
     TicketResponse,
@@ -18,7 +18,7 @@ from models.ticket import (
 )
 
 # Import agent management functions
-import api.agents as agents_api
+from . import agents as agents_api
 
 router = APIRouter(prefix="/api/tickets", tags=["tickets"])
 

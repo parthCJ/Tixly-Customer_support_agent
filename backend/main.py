@@ -84,8 +84,8 @@ async def startup_event():
     print("🚀 Starting Customer Support Copilot...")
     print("🔄 Initializing AI services...")
     
-    from services.ai_service import TicketAIService
-    from services.kb_service import KnowledgeBaseService
+    from .services.ai_service import TicketAIService
+    from .services.kb_service import KnowledgeBaseService
     
     try:
         ai_service = TicketAIService()
@@ -115,7 +115,7 @@ async def startup_event():
     tickets.ai_service = ai_service
     tickets.kb_service = kb_service
     
-    from models.agent import Agent, AgentStatus
+    from .models.agent import Agent, AgentStatus
     
     # Create sample agents
     sample_agents = [

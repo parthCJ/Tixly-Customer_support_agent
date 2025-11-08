@@ -7,7 +7,7 @@ CRUD operations and agent management endpoints for customer support agents.
 from fastapi import APIRouter, HTTPException, Query
 from typing import List, Optional, Dict, Any
 from datetime import datetime
-from models.agent import (
+from ..models.agent import (
     Agent, 
     AgentCreate, 
     AgentUpdate, 
@@ -15,7 +15,7 @@ from models.agent import (
     AgentStatus,
     AgentAssignmentResponse
 )
-from models.ticket import TicketCategory
+from ..models.ticket import TicketCategory
 
 router = APIRouter(prefix="/api/agents", tags=["agents"])
 

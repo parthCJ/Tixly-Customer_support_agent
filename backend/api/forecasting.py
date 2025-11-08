@@ -5,13 +5,8 @@ Provides REST API for ticket volume predictions
 from fastapi import APIRouter, HTTPException
 from typing import List, Dict, Any
 from datetime import datetime
-import sys
-import os
 
-# Add parent directory to path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from services.forecasting_service import get_forecasting_service
+from ..services.forecasting_service import get_forecasting_service
 from pydantic import BaseModel
 
 

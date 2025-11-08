@@ -98,7 +98,7 @@ class TicketAIService:
         try:
             # If no KB context provided, search for it
             if kb_context is None:
-                from services.kb_service import search_knowledge_base
+                from .kb_service import search_knowledge_base
                 
                 # Search KB for relevant articles
                 kb_articles = search_knowledge_base(

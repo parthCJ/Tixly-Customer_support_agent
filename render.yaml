@@ -10,3 +10,5 @@ services:
         value: 3.11.0
       - key: GROQ_API_KEY
         sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false

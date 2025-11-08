@@ -4,6 +4,7 @@ Entry point for the Customer Support Copilot backend
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import os
 from api import tickets, forecasting, agents
 from datetime import datetime
 
@@ -18,11 +19,33 @@ app = FastAPI(
 ai_service = None
 kb_service = None
 
-# Configure CORS - Simple localhost only
+# ----------------------------------------------------------------------------
+# CORS configuration (env-driven)
+# - Set ALLOWED_ORIGINS to a comma-separated list (e.g.,
+#   "https://tixly-customer-support-agent.vercel.app,https://preview-url.vercel.app")
+# - FRONTEND_URL is also supported as a single-origin shortcut.
+# - Localhost is always allowed for development.
+# ----------------------------------------------------------------------------
+_default_local_origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+raw_allowed = os.getenv("ALLOWED_ORIGINS") or os.getenv("FRONTEND_URL") or ""
+parsed_allowed = [o.strip().rstrip("/") for o in raw_allowed.split(",") if o.strip()]
+
+# Always include localhost during development
+allow_origins = list({*(parsed_allowed), *(_default_local_origins)}) if parsed_allowed else _default_local_origins
+
+# With explicit origins, credentials may be enabled; avoid credentials with wildcard
+allow_credentials = True if allow_origins and allow_origins != ["*"] else False
+
+print(f"🛡️  CORS allow_origins: {allow_origins} | allow_credentials={allow_credentials}")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
-    allow_credentials=True,
+    allow_origins=allow_origins,
+    allow_credentials=allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )

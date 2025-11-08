@@ -80,13 +80,13 @@ export const ticketsApi = {
     customer_email: string;
     customer_name?: string;
   }): Promise<TicketResponse> => {
-    const response = await api.post('/api/tickets/create', data);
+    const response = await api.post('/api/tickets/create/', data);
     return response.data;
   },
 
   // Update ticket status
   updateStatus: async (ticketId: string, status: TicketStatus): Promise<Ticket> => {
-    const response = await api.put(`/api/tickets/${ticketId}/status?status=${status}`);
+    const response = await api.put(`/api/tickets/${ticketId}/status/?status=${status}`);
     return response.data;
   },
 
@@ -95,7 +95,7 @@ export const ticketsApi = {
     ticketId: string,
     options: { agent_id?: string; auto_assign?: boolean }
   ): Promise<AssignmentResponse> => {
-    const response = await api.put(`/api/tickets/${ticketId}/assign`, null, {
+    const response = await api.put(`/api/tickets/${ticketId}/assign/`, null, {
       params: options,
     });
     return response.data;
@@ -143,7 +143,7 @@ export const agentsApi = {
     available_count: number;
     agents: any[];
   }> => {
-    const response = await api.get('/api/agents/available/by-skill', {
+    const response = await api.get('/api/agents/available/by-skill/', {
       params: { skill },
     });
     return response.data;
@@ -154,7 +154,7 @@ export const agentsApi = {
     agentId: string,
     status: string
   ): Promise<{ agent_id: string; name: string; status: string; message: string }> => {
-    const response = await api.post(`/api/agents/${agentId}/status`, null, {
+    const response = await api.post(`/api/agents/${agentId}/status/`, null, {
       params: { status },
     });
     return response.data;
@@ -178,7 +178,7 @@ export const agentsApi = {
     agentId: string,
     data: Partial<Agent>
   ): Promise<Agent> => {
-    const response = await api.put(`/api/agents/${agentId}`, data);
+    const response = await api.put(`/api/agents/${agentId}/`, data);
     return response.data;
   },
 
@@ -187,7 +187,7 @@ export const agentsApi = {
     agentId: string,
     permanent: boolean = false
   ): Promise<{ message: string }> => {
-    const response = await api.delete(`/api/agents/${agentId}`, {
+    const response = await api.delete(`/api/agents/${agentId}/`, {
       params: { permanent },
     });
     return response.data;
@@ -201,19 +201,19 @@ export const agentsApi = {
 export const forecastingApi = {
   // Get hourly forecast
   getHourly: async (hours: number = 24): Promise<HourlyForecast[]> => {
-    const response = await api.get(`/api/forecast/hourly/${hours}`);
+    const response = await api.get(`/api/forecast/hourly/${hours}/`);
     return response.data.forecast;
   },
 
   // Get daily forecast
   getDaily: async (days: number = 7): Promise<DailyForecast[]> => {
-    const response = await api.get(`/api/forecast/daily/${days}`);
+    const response = await api.get(`/api/forecast/daily/${days}/`);
     return response.data.predictions;
   },
 
   // Get current staffing recommendation
   getStaffing: async (): Promise<StaffingRecommendation & { current_hour: string }> => {
-    const response = await api.get('/api/forecast/staffing/current');
+    const response = await api.get('/api/forecast/staffing/current/');
     return response.data;
   },
 
@@ -224,7 +224,7 @@ export const forecastingApi = {
     sequence_length: number;
     features: string[];
   }> => {
-    const response = await api.get('/api/forecast/model/info');
+    const response = await api.get('/api/forecast/model/info/');
     return response.data;
   },
 };

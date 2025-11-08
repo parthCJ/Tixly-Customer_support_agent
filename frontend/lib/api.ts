@@ -63,13 +63,13 @@ api.interceptors.response.use(
 export const ticketsApi = {
   // Get all tickets
   getAll: async (): Promise<Ticket[]> => {
-    const response = await api.get('/api/tickets');
+    const response = await api.get('/api/tickets/');
     return response.data;
   },
 
   // Get single ticket
   getById: async (ticketId: string): Promise<Ticket> => {
-    const response = await api.get(`/api/tickets/${ticketId}`);
+    const response = await api.get(`/api/tickets/${ticketId}/`);
     return response.data;
   },
 
@@ -103,7 +103,7 @@ export const ticketsApi = {
 
   // Unassign ticket
   unassign: async (ticketId: string): Promise<{ ticket: Ticket; message: string }> => {
-    const response = await api.put(`/api/tickets/${ticketId}/unassign`);
+    const response = await api.put(`/api/tickets/${ticketId}/unassign/`);
     return response.data;
   },
 };
@@ -125,13 +125,13 @@ export const agentsApi = {
 
   // Get agent by ID
   getById: async (agentId: string): Promise<Agent> => {
-    const response = await api.get(`/api/agents/${agentId}`);
+    const response = await api.get(`/api/agents/${agentId}/`);
     return response.data;
   },
 
   // Get agent statistics
   getStats: async (team?: string): Promise<AgentStats[]> => {
-    const response = await api.get('/api/agents/stats', {
+    const response = await api.get('/api/agents/stats/', {
       params: team ? { team } : undefined,
     });
     return response.data;

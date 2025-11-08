@@ -248,7 +248,7 @@ async def list_tickets(
     return tickets[:limit]
 
 
-@router.post("/webhook/zendesk")
+@router.post("/webhook/zendesk/")
 async def zendesk_webhook(payload: dict, background_tasks: BackgroundTasks):
     """
     Webhook endpoint for Zendesk integration
@@ -289,7 +289,7 @@ async def zendesk_webhook(payload: dict, background_tasks: BackgroundTasks):
         )
 
 
-@router.post("/webhook/intercom")
+@router.post("/webhook/intercom/")
 async def intercom_webhook(payload: dict, background_tasks: BackgroundTasks):
     """
     Webhook endpoint for Intercom integration

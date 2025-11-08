@@ -164,7 +164,7 @@ async def update_agent(agent_id: str, update_data: AgentUpdate):
     return agent
 
 
-@router.delete("/{agent_id}")
+@router.delete("/{agent_id}/")
 async def delete_agent(agent_id: str, permanent: bool = Query(False, description="Permanently delete (vs deactivate)")):
     """
     Delete or deactivate an agent

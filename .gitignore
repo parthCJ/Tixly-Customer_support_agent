@@ -54,4 +54,4 @@ models/*.pkl
 
 # Documentation (except README)
 *.md
-!README.md
+README.md

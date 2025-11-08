@@ -1,13 +1,25 @@
-# 🤖 AI-Powered Customer Support Platform
+---
+title: Tixly Customer Support API
+emoji: 🎫
+colorFrom: blue
+colorTo: purple
+sdk: docker
+app_port: 7860
+pinned: false
+license: mit
+---
+
+# 🎫 Tixly Customer Support Copilot - Backend API
 
 **Video Demo**: https://drive.google.com/file/d/1fyeg-WjjwA7B6Ue7DKvUjaqdglc-gSj5/view?usp=sharing
 
-> Intelligent ticket management system with AI classification, automated reply suggestions, and predictive analytics
+> AI-powered customer support ticket management system with automated classification, smart routing, and knowledge base integration.
 
 [![Next.js](https://img.shields.io/badge/Next.js-14.0-black?logo=next.js)](https://nextjs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python)](https://www.python.org/)
+[![Hugging Face](https://img.shields.io/badge/🤗%20Hugging%20Face-Spaces-yellow)](https://huggingface.co/spaces)
 
 ---
 

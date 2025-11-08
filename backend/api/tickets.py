@@ -133,7 +133,7 @@ async def process_ticket_with_ai(ticket: Ticket):
         # Don't fail the ticket creation, just log the error
 
 
-@router.post("/create", response_model=TicketResponse)
+@router.post("/create/", response_model=TicketResponse)
 async def create_ticket(
     request: TicketCreateRequest,
     background_tasks: BackgroundTasks
@@ -208,7 +208,7 @@ async def create_ticket(
         )
 
 
-@router.get("/{ticket_id}", response_model=Ticket)
+@router.get("/{ticket_id}/", response_model=Ticket)
 async def get_ticket(ticket_id: str):
     """
     Retrieve a ticket by ID
@@ -335,7 +335,7 @@ async def intercom_webhook(payload: dict, background_tasks: BackgroundTasks):
         )
 
 
-@router.put("/{ticket_id}/status")
+@router.put("/{ticket_id}/status/")
 async def update_ticket_status(
     ticket_id: str,
     status: TicketStatus = Query(..., description="New status for the ticket")
@@ -367,7 +367,7 @@ async def update_ticket_status(
     return ticket
 
 
-@router.put("/{ticket_id}/assign")
+@router.put("/{ticket_id}/assign/")
 async def assign_ticket(
     ticket_id: str, 
     agent_id: Optional[str] = Query(None, description="Specific agent ID to assign to"),
@@ -470,7 +470,7 @@ async def assign_ticket(
     }
 
 
-@router.put("/{ticket_id}/unassign")
+@router.put("/{ticket_id}/unassign/")
 async def unassign_ticket(ticket_id: str):
     """
     Remove agent assignment from a ticket

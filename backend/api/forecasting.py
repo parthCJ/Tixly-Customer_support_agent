@@ -19,7 +19,7 @@ class ForecastResponse(BaseModel):
     summary: Dict[str, Any]
 
 
-@router.get("/hourly/{hours}", response_model=ForecastResponse)
+@router.get("/hourly/{hours}/", response_model=ForecastResponse)
 async def get_hourly_forecast(hours: int = 24):
     """
     Get hourly ticket volume forecast
@@ -71,7 +71,7 @@ async def get_hourly_forecast(hours: int = 24):
         raise HTTPException(status_code=500, detail=f"Forecasting error: {str(e)}")
 
 
-@router.get("/daily/{days}")
+@router.get("/daily/{days}/")
 async def get_daily_forecast(days: int = 7):
     """
     Get daily ticket volume forecast
@@ -127,7 +127,7 @@ async def get_daily_forecast(days: int = 7):
         raise HTTPException(status_code=500, detail=f"Forecasting error: {str(e)}")
 
 
-@router.get("/staffing/current")
+@router.get("/staffing/current/")
 async def get_current_staffing():
     """
     Get current staffing recommendation based on real-time data
@@ -163,7 +163,7 @@ async def get_current_staffing():
     }
 
 
-@router.get("/model/info")
+@router.get("/model/info/")
 async def get_model_info():
     """Get information about the forecasting model"""
     service = get_forecasting_service()

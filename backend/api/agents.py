@@ -88,7 +88,7 @@ async def list_agents(
     return agents
 
 
-@router.get("/stats", response_model=List[AgentStats])
+@router.get("/stats/", response_model=List[AgentStats])
 async def get_agent_statistics(team: Optional[str] = None):
     """
     Get performance statistics for all agents
@@ -191,7 +191,7 @@ async def delete_agent(agent_id: str, permanent: bool = Query(False, description
 # Agent Availability & Assignment
 # ============================================================================
 
-@router.get("/available/by-skill")
+@router.get("/available/by-skill/")
 async def get_available_agents_by_skill(
     skill: str = Query(..., description="Required skill (e.g., SHIPPING, BILLING)")
 ):
@@ -234,7 +234,7 @@ async def get_available_agents_by_skill(
     }
 
 
-@router.post("/{agent_id}/status")
+@router.post("/{agent_id}/status/")
 async def update_agent_status(
     agent_id: str,
     status: AgentStatus = Query(..., description="New status (active/away/offline)")

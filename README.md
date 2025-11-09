@@ -1,13 +1,4 @@
----
-title: Tixly Customer Support API
-emoji: 🎫
-colorFrom: blue
-colorTo: purple
-sdk: docker
-app_port: 7860
-pinned: false
-license: mit
----
+
 
 # 🎫 Tixly Customer Support Copilot - Backend API
 
@@ -20,21 +11,6 @@ license: mit
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python)](https://www.python.org/)
 [![Hugging Face](https://img.shields.io/badge/🤗%20Hugging%20Face-Spaces-yellow)](https://huggingface.co/spaces)
-
----
-
-## � Pricing
-
-| Plan | Price | Best For | Features |
-|------|-------|----------|----------|
-| **Free Pilot** | $0 for 30 days<br>Then $199/mo | Testing with your team | • Up to 100 tickets/day<br>• Full AI features<br>• Email support |
-| **Starter** | **$49**/agent/month | Small teams (1-5 agents) | • Unlimited tickets<br>• AI classification<br>• Knowledge base<br>• Email support |
-| **Growth** | **$99**/agent/month | Growing teams (5-20 agents) | • Everything in Starter<br>• Priority support<br>• Custom integrations<br>• Dedicated onboarding |
-| **Enterprise** | Custom pricing | Large teams (20+ agents) | • Everything in Growth<br>• White-label option<br>• SLA guarantee<br>• Custom training |
-
-**💡 Start Free**: Try all features free for 30 days. No credit card required.
-
-**📧 Contact**: parthcj@example.com (replace with your email)
 
 ---
 

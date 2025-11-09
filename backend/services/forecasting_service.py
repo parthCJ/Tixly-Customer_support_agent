@@ -39,12 +39,20 @@ class TicketForecastingService:
         self.scaler = MinMaxScaler(feature_range=(0, 1))
         self.sequence_length = 24  # Use 24 hours of data to predict next hour
         
+        # Debug: Print current working directory and model path
+        print(f"🔍 Current working directory: {os.getcwd()}")
+        print(f"🔍 Looking for model at: {os.path.abspath(model_path)}")
+        print(f"🔍 Model file exists: {os.path.exists(model_path)}")
+        print(f"🔍 Scaler file exists: {os.path.exists(self.scaler_path)}")
+        
         # Create models directory if it doesn't exist
         os.makedirs(os.path.dirname(model_path), exist_ok=True)
         
         # Load model if exists
         if os.path.exists(model_path):
             self.load_model()
+        else:
+            print(f"⚠️  Model file not found at {os.path.abspath(model_path)}")
     
     def create_model(self, input_shape: Tuple[int, int]) -> Sequential:
         """

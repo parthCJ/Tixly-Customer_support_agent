@@ -197,15 +197,15 @@ export default function SubmitTicketPage() {
             <p className="text-sm text-gray-500 text-center mb-4">What happens next?</p>
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
-                <div className="text-2xl mb-1">⚡</div>
+                <div className="text-2xl mb-1"></div>
                 <p className="text-xs text-gray-600">AI analyzes in <br/><strong>&lt;2 seconds</strong></p>
               </div>
               <div>
-                <div className="text-2xl mb-1">🎯</div>
+                <div className="text-2xl mb-1"></div>
                 <p className="text-xs text-gray-600">Auto-classified<br/><strong>95% accuracy</strong></p>
               </div>
               <div>
-                <div className="text-2xl mb-1">💬</div>
+                <div className="text-2xl mb-1"></div>
                 <p className="text-xs text-gray-600">Agent replies<br/><strong>in 30 seconds</strong></p>
               </div>
             </div>

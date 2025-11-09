@@ -85,6 +85,7 @@ def _init_services_blocking():
         print("� Background initialization started...")
         from .services.ai_service import TicketAIService
         from .services.kb_service import KnowledgeBaseService
+        from .services.forecasting_service import get_forecasting_service
         from .models.agent import Agent, AgentStatus
         from .data.sample_kb_articles import SAMPLE_ARTICLES
 
@@ -106,6 +107,16 @@ def _init_services_blocking():
         except Exception as e:
             print(f"⚠️  KB Service initialization failed: {e}")
             kb_service = None
+
+        # Forecasting Service
+        try:
+            forecasting_service = get_forecasting_service()
+            if forecasting_service.model:
+                print("✅ Forecasting Service initialized with trained model")
+            else:
+                print("⚠️  Forecasting Service initialized but model not loaded")
+        except Exception as e:
+            print(f"⚠️  Forecasting Service initialization failed: {e}")
 
         # Wire services for ticket processing
         tickets.ai_service = ai_service

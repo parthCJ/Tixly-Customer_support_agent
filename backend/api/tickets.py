@@ -87,10 +87,17 @@ async def process_ticket_with_ai(ticket: Ticket):
         ticket.extracted_metadata = classification["extracted_info"]
         
         # Auto-assign category and priority if confidence is high
+        category_changed = False
         if classification["confidence"] > 0.7:
+            old_category = ticket.category
             ticket.category = TicketCategory(classification["category"])
             ticket.priority = TicketPriority(classification["priority"])
             print(f"   ✅ Auto-classified: {ticket.category.value} | {ticket.priority.value}")
+            
+            # Check if category changed significantly and reassign if needed
+            if old_category != ticket.category and ticket.assigned_to:
+                category_changed = True
+                print(f"   🔄 Category changed from {old_category} to {ticket.category}, checking reassignment...")
         else:
             print(f"   ⚠️  Low confidence ({classification['confidence']:.2f}), keeping defaults")
         
@@ -121,6 +128,29 @@ async def process_ticket_with_ai(ticket: Ticket):
         
         suggested_reply = ai_service.generate_suggested_reply(ticket_data, kb_context)
         ticket.ai_suggested_reply = suggested_reply
+        
+        # Reassign to better agent if category changed after AI classification
+        if category_changed:
+            try:
+                current_agent_id = ticket.assigned_to
+                best_agent = agents_api.find_best_agent_for_ticket(
+                    category=ticket.category,
+                    priority=ticket.priority.value if ticket.priority else "medium"
+                )
+                
+                # Only reassign if we found a better agent with matching skills
+                if best_agent and best_agent.agent_id != current_agent_id:
+                    # Check if new agent has the skill for this category
+                    if ticket.category.value in best_agent.skills:
+                        # Unassign from current agent
+                        agents_api.unassign_ticket_from_agent(current_agent_id, ticket.ticket_id)
+                        # Assign to new agent
+                        agents_api.assign_ticket_to_agent(best_agent.agent_id, ticket.ticket_id)
+                        ticket.assigned_to = best_agent.agent_id
+                        ticket.team = best_agent.team
+                        print(f"   🔄 Reassigned from {current_agent_id} to {best_agent.name} (has {ticket.category.value} skill)")
+            except Exception as e:
+                print(f"   ⚠️  Could not reassign ticket: {e}")
         
         # Update the ticket in storage
         tickets_db[ticket.ticket_id] = ticket
@@ -178,25 +208,38 @@ async def create_ticket(
         # Store ticket
         tickets_db[ticket_id] = ticket
         
-        # Auto-assign to AGENT-001 for demo purposes
-        ticket.assigned_to = "AGENT-001"
-        
-        # Update agent's assigned tickets using agents API
-        try:
-            agents_api.assign_ticket_to_agent("AGENT-001", ticket_id)
-        except Exception as e:
-            print(f"Warning: Could not auto-assign to agent: {e}")
-        
-        # Queue AI processing in background
+        # Queue AI processing in background (will update category/priority)
         background_tasks.add_task(process_ticket_with_ai, ticket)
+        
+        # Try to auto-assign to best available agent after AI processing completes
+        # For now, assign immediately based on default category
+        try:
+            best_agent = agents_api.find_best_agent_for_ticket(
+                category=ticket.category,
+                priority=ticket.priority.value if ticket.priority else "medium"
+            )
+            
+            if best_agent:
+                ticket.assigned_to = best_agent.agent_id
+                ticket.team = best_agent.team
+                ticket.status = TicketStatus.IN_PROGRESS
+                agents_api.assign_ticket_to_agent(best_agent.agent_id, ticket_id)
+                assignment_message = f"Auto-assigned to {best_agent.name}"
+                print(f"✅ Ticket {ticket_id} auto-assigned to {best_agent.name}")
+            else:
+                assignment_message = "Pending agent assignment"
+                print(f"⚠️  No available agent found for ticket {ticket_id}")
+        except Exception as e:
+            assignment_message = "Pending agent assignment"
+            print(f"⚠️  Could not auto-assign ticket {ticket_id}: {e}")
         
         # Return immediate response
         return TicketResponse(
             ticket=ticket,
             suggested_actions=[
                 "Ticket created successfully",
-                "Auto-assigned to AGENT-001",
-                "AI processing queued",
+                assignment_message,
+                "AI classification in progress",
                 "Agent will be notified"
             ]
         )

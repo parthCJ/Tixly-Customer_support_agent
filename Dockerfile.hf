@@ -20,6 +20,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY backend/ ./backend/
 COPY app.py .
+COPY models/ ./models/
 
 # Create directories for data
 RUN mkdir -p backend/chroma_data backend/models

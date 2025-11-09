@@ -67,19 +67,19 @@ export default function AgentDashboard() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">
           Agent Dashboard
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
           Welcome back! Here's what's happening with your tickets today.
         </p>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <Card>
           <div className="flex items-center justify-between">
             <div>
@@ -148,13 +148,13 @@ export default function AgentDashboard() {
             </div>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 sm:gap-4">
             {myTickets.slice(0, 6).map((ticket) => (
               <Card key={ticket.ticket_id} className="hover:shadow-lg transition-shadow cursor-pointer">
                 <div className="space-y-3">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
+                      <div className="flex flex-wrap items-center gap-2 mb-2">
                         <span className="text-xs font-mono text-gray-500">{ticket.ticket_id}</span>
                         <Badge variant={getPriorityColor(ticket.priority)} size="sm">
                           {ticket.priority || 'MEDIUM'}
@@ -163,22 +163,22 @@ export default function AgentDashboard() {
                           {ticket.category || 'OTHER'}
                         </Badge>
                       </div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+                      <h3 className="font-semibold text-gray-900 dark:text-white mb-1 text-sm sm:text-base">
                         {ticket.subject}
                       </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
+                      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
                         {ticket.description}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
-                    <div className="flex items-center gap-1">
-                      <User className="h-3 w-3" />
-                      {ticket.customer_email}
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs text-gray-500 dark:text-gray-400">
+                    <div className="flex items-center gap-1 truncate">
+                      <User className="h-3 w-3 flex-shrink-0" />
+                      <span className="truncate">{ticket.customer_email}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
+                      <Clock className="h-3 w-3 flex-shrink-0" />
                       {new Date(ticket.created_at).toLocaleDateString()}
                     </div>
                   </div>
@@ -187,7 +187,7 @@ export default function AgentDashboard() {
                     <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
                       <div className="flex items-start gap-2">
                         <MessageSquare className="h-4 w-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                           <p className="text-xs font-medium text-blue-900 dark:text-blue-300 mb-1">
                             AI Suggested Reply
                           </p>
@@ -199,11 +199,11 @@ export default function AgentDashboard() {
                     </div>
                   )}
 
-                  <div className="flex gap-2 pt-2">
+                  <div className="flex flex-col sm:flex-row gap-2 pt-2">
                     <Button 
                       size="sm" 
                       variant="primary" 
-                      className="flex-1"
+                      className="flex-1 w-full sm:w-auto"
                       onClick={() => setSelectedTicket(ticket)}
                     >
                       Reply
@@ -211,7 +211,7 @@ export default function AgentDashboard() {
                     <Button 
                       size="sm" 
                       variant="secondary" 
-                      className="flex-1"
+                      className="flex-1 w-full sm:w-auto"
                       onClick={() => setSelectedTicket(ticket)}
                     >
                       View Details

@@ -2,10 +2,12 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Users, BarChart3, Settings, LogOut } from 'lucide-react';
+import { Home, Users, BarChart3, Settings, LogOut, Menu, X } from 'lucide-react';
+import { useState } from 'react';
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navigation = [
     { name: 'Dashboard', href: '/agent', icon: Home },
@@ -15,9 +17,37 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="flex h-screen w-64 flex-col bg-gray-900">
-      {/* Logo */}
-      <div className="flex h-16 items-center justify-center border-b border-gray-800">
+    <>
+      {/* Mobile Header */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 flex h-16 items-center justify-between bg-gray-900 px-4 border-b border-gray-800">
+        <h1 className="text-lg font-bold text-white">Support Copilot</h1>
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="text-white p-2 hover:bg-gray-800 rounded-lg transition-colors"
+        >
+          {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </button>
+      </div>
+
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div
+          className="lg:hidden fixed inset-0 z-40 bg-black bg-opacity-50"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div className={`
+        fixed lg:static inset-y-0 left-0 z-40
+        flex h-screen w-64 flex-col bg-gray-900
+        transform transition-transform duration-300 ease-in-out
+        lg:translate-x-0
+        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+        lg:mt-0 mt-16
+      `}>
+      {/* Logo - Hidden on mobile, shown on desktop */}
+      <div className="hidden lg:flex h-16 items-center justify-center border-b border-gray-800">
         <h1 className="text-xl font-bold text-white">Support Copilot</h1>
       </div>
 
@@ -31,6 +61,7 @@ export default function Sidebar() {
             <Link
               key={item.name}
               href={item.href}
+              onClick={() => setIsMobileMenuOpen(false)}
               className={`
                 flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors
                 ${
@@ -62,6 +93,7 @@ export default function Sidebar() {
           </button>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

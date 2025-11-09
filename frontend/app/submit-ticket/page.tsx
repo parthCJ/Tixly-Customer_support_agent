@@ -74,19 +74,19 @@ export default function SubmitTicketPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <div className="max-w-2xl mx-auto px-4 py-12">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
             AI Support Copilot
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-base sm:text-lg text-gray-600 px-4">
             Submit your support ticket and get instant AI-powered assistance
           </p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+        <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl p-6 sm:p-8 border border-gray-100">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Name Field */}
             <div>
@@ -176,7 +176,7 @@ export default function SubmitTicketPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-4 px-6 rounded-lg hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-3 sm:py-4 px-6 rounded-lg hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
             >
               {loading ? (
                 <span className="flex items-center justify-center">
@@ -193,27 +193,33 @@ export default function SubmitTicketPage() {
           </form>
 
           {/* Features */}
-          <div className="mt-8 pt-6 border-t border-gray-200">
-            <p className="text-sm text-gray-500 text-center mb-4">What happens next?</p>
-            <div className="grid grid-cols-3 gap-4 text-center">
+          <div className="mt-6 sm:mt-8 pt-6 border-t border-gray-200">
+            <p className="text-xs sm:text-sm text-gray-500 text-center mb-3 sm:mb-4">What happens next?</p>
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 text-center">
               <div>
-                <div className="text-2xl mb-1"></div>
-                <p className="text-xs text-gray-600">AI analyzes in <br/><strong>&lt;2 seconds</strong></p>
+                <div className="text-xl sm:text-2xl mb-1"></div>
+                <p className="text-[10px] sm:text-xs text-gray-600">
+                  AI analyzes in <br/><strong>&lt;2 seconds</strong>
+                </p>
               </div>
               <div>
-                <div className="text-2xl mb-1"></div>
-                <p className="text-xs text-gray-600">Auto-classified<br/><strong>95% accuracy</strong></p>
+                <div className="text-xl sm:text-2xl mb-1"></div>
+                <p className="text-[10px] sm:text-xs text-gray-600">
+                  Auto-classified<br/><strong>95% accuracy</strong>
+                </p>
               </div>
               <div>
-                <div className="text-2xl mb-1"></div>
-                <p className="text-xs text-gray-600">Agent replies<br/><strong>in 30 seconds</strong></p>
+                <div className="text-xl sm:text-2xl mb-1"></div>
+                <p className="text-[10px] sm:text-xs text-gray-600">
+                  Agent replies<br/><strong>in 30 seconds</strong>
+                </p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Footer */}
-        <p className="text-center text-sm text-gray-500 mt-6">
+        <p className="text-center text-xs sm:text-sm text-gray-500 mt-4 sm:mt-6">
           Powered by AI • Groq LLaMA 3.1 70B
         </p>
       </div>

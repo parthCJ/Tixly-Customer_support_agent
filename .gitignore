@@ -55,3 +55,8 @@ models/*.pkl
 # Documentation (except README)
 *.md
 README.md
+
+
+node_modules
+node_modules/
+node_modules

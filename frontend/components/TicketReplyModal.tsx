@@ -20,7 +20,7 @@ export function TicketReplyModal({ ticket, onClose }: TicketReplyModalProps) {
   const queryClient = useQueryClient();
   
   // Check if ticket is already resolved
-  const isResolved = ticket.status === TicketStatus.RESOLVED || ticket.status === 'resolved';
+  const isResolved = ticket.status === TicketStatus.RESOLVED;
 
   // Mutation for updating ticket status
   // uses the optimistic updates so that UI updates immediatly before API call to POST ex changes the Status from new -> Resolved.

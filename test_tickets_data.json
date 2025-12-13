@@ -1,0 +1,802 @@
+[
+  {
+    "customer_email": "sarah.johnson@email.com",
+    "customer_name": "Sarah Johnson",
+    "subject": "Order hasn't shipped yet",
+    "description": "I ordered items 5 days ago (Order #10234) and tracking still shows 'processing'. When will my order ship?",
+    "order_id": "10234",
+    "source": "web"
+  },
+  {
+    "customer_email": "mike.chen@example.com",
+    "customer_name": "Mike Chen",
+    "subject": "Double charged for subscription",
+    "description": "I was charged $29.99 twice this month for my premium subscription. Please refund the duplicate charge.",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "emma.davis@mail.com",
+    "customer_name": "Emma Davis",
+    "subject": "Product arrived damaged",
+    "description": "My order #10567 arrived today but the box was crushed and the item inside is broken. I need a replacement ASAP.",
+    "order_id": "10567",
+    "source": "web"
+  },
+  {
+    "customer_email": "john.williams@company.com",
+    "customer_name": "John Williams",
+    "subject": "Cannot log into my account",
+    "description": "I've been trying to reset my password but I'm not receiving the reset email. I've checked spam folder. Please help!",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "lisa.martinez@email.com",
+    "customer_name": "Lisa Martinez",
+    "subject": "Want to return unused item",
+    "description": "I purchased a product last week but haven't opened it yet. Can I return it for a full refund?",
+    "order_id": "10789",
+    "source": "web"
+  },
+  {
+    "customer_email": "david.brown@example.com",
+    "customer_name": "David Brown",
+    "subject": "URGENT: Wrong item shipped",
+    "description": "I ordered a blue size Large shirt but received a red size Small. I need the correct item immediately for an event this weekend!",
+    "order_id": "10456",
+    "source": "web"
+  },
+  {
+    "customer_email": "rachel.taylor@mail.com",
+    "customer_name": "Rachel Taylor",
+    "subject": "Refund status inquiry",
+    "description": "I returned an item 2 weeks ago and haven't received my refund yet. Order #10123. When will I get my money back?",
+    "order_id": "10123",
+    "source": "web"
+  },
+  {
+    "customer_email": "james.anderson@company.com",
+    "customer_name": "James Anderson",
+    "subject": "Product quality issue",
+    "description": "The product I received doesn't match the description. The material feels cheap and it's not working properly.",
+    "order_id": "10890",
+    "source": "web"
+  },
+  {
+    "customer_email": "olivia.wilson@email.com",
+    "customer_name": "Olivia Wilson",
+    "subject": "Tracking number not working",
+    "description": "I received a tracking number but when I try to track my package, it says invalid. Order #10345.",
+    "order_id": "10345",
+    "source": "web"
+  },
+  {
+    "customer_email": "robert.garcia@example.com",
+    "customer_name": "Robert Garcia",
+    "subject": "Cancel my subscription",
+    "description": "I want to cancel my monthly subscription immediately. Please confirm cancellation and no future charges.",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "sophia.lopez@mail.com",
+    "customer_name": "Sophia Lopez",
+    "subject": "Missing items from order",
+    "description": "My order #10678 arrived but 2 out of 5 items are missing from the package. I was charged for all items.",
+    "order_id": "10678",
+    "source": "web"
+  },
+  {
+    "customer_email": "william.lee@company.com",
+    "customer_name": "William Lee",
+    "subject": "Gift card not working",
+    "description": "I received a $50 gift card but it says invalid when I try to use it at checkout. Gift card code: GC-1234567",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "ava.rodriguez@email.com",
+    "customer_name": "Ava Rodriguez",
+    "subject": "Shipping delay concern",
+    "description": "My order was supposed to arrive yesterday but tracking shows it's still in transit. Will it arrive today?",
+    "order_id": "10912",
+    "source": "web"
+  },
+  {
+    "customer_email": "noah.martinez@example.com",
+    "customer_name": "Noah Martinez",
+    "subject": "Discount code didn't apply",
+    "description": "I used code SAVE20 but the 20% discount didn't apply to my order #10543. Can I get a refund of the difference?",
+    "order_id": "10543",
+    "source": "web"
+  },
+  {
+    "customer_email": "isabella.clark@mail.com",
+    "customer_name": "Isabella Clark",
+    "subject": "Product not as described",
+    "description": "The color and size of the item I received are completely different from what was shown on the website.",
+    "order_id": "10234",
+    "source": "web"
+  },
+  {
+    "customer_email": "ethan.white@company.com",
+    "customer_name": "Ethan White",
+    "subject": "Payment declined but money taken",
+    "description": "My payment was declined during checkout but the money was deducted from my bank account. I never received a confirmation.",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "mia.harris@email.com",
+    "customer_name": "Mia Harris",
+    "subject": "Need invoice for business expense",
+    "description": "I need a detailed invoice for my recent purchase (Order #10456) for business expense reimbursement.",
+    "order_id": "10456",
+    "source": "web"
+  },
+  {
+    "customer_email": "lucas.thompson@example.com",
+    "customer_name": "Lucas Thompson",
+    "subject": "Product assembly instructions missing",
+    "description": "The product arrived but there are no assembly instructions included. Can you send me a PDF?",
+    "order_id": "10789",
+    "source": "web"
+  },
+  {
+    "customer_email": "charlotte.moore@mail.com",
+    "customer_name": "Charlotte Moore",
+    "subject": "CRITICAL: Package delivered to wrong address",
+    "description": "Tracking says delivered but I never received my package! It was delivered to the wrong address. This is urgent!",
+    "order_id": "10890",
+    "source": "web"
+  },
+  {
+    "customer_email": "henry.jackson@company.com",
+    "customer_name": "Henry Jackson",
+    "subject": "Update shipping address",
+    "description": "I need to change the shipping address for order #10567 before it ships. Please update to 123 New Street.",
+    "order_id": "10567",
+    "source": "web"
+  },
+  {
+    "customer_email": "amelia.martin@email.com",
+    "customer_name": "Amelia Martin",
+    "subject": "Product warranty information",
+    "description": "What is the warranty period for my recent purchase? How do I claim warranty if needed?",
+    "order_id": "10345",
+    "source": "web"
+  },
+  {
+    "customer_email": "alexander.lee@example.com",
+    "customer_name": "Alexander Lee",
+    "subject": "Received empty package",
+    "description": "Order #10678 arrived but the box was empty! The tape was clearly tampered with. This is unacceptable!",
+    "order_id": "10678",
+    "source": "web"
+  },
+  {
+    "customer_email": "harper.walker@mail.com",
+    "customer_name": "Harper Walker",
+    "subject": "Pre-order delivery date",
+    "description": "I pre-ordered an item 2 months ago. When will it be available and shipped?",
+    "order_id": "10123",
+    "source": "web"
+  },
+  {
+    "customer_email": "sebastian.hall@company.com",
+    "customer_name": "Sebastian Hall",
+    "subject": "Change payment method",
+    "description": "I want to update my payment method for my subscription. How do I do this?",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "evelyn.allen@email.com",
+    "customer_name": "Evelyn Allen",
+    "subject": "Product compatibility question",
+    "description": "Will the model XYZ work with my device? I need to know before it arrives.",
+    "order_id": "10912",
+    "source": "web"
+  },
+  {
+    "customer_email": "jack.young@example.com",
+    "customer_name": "Jack Young",
+    "subject": "Still waiting for refund",
+    "description": "It's been 3 weeks since I returned my item and still no refund. This is taking way too long!",
+    "order_id": "10234",
+    "source": "web"
+  },
+  {
+    "customer_email": "scarlett.king@mail.com",
+    "customer_name": "Scarlett King",
+    "subject": "Bulk order inquiry",
+    "description": "I want to order 50 units. Do you offer bulk discounts? What would the price be?",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "daniel.wright@company.com",
+    "customer_name": "Daniel Wright",
+    "subject": "Charged for cancelled order",
+    "description": "I cancelled order #10456 but was still charged. Please refund immediately.",
+    "order_id": "10456",
+    "source": "web"
+  },
+  {
+    "customer_email": "victoria.scott@email.com",
+    "customer_name": "Victoria Scott",
+    "subject": "Product recommendation needed",
+    "description": "I'm looking for a product that can do X and Y. What do you recommend?",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "matthew.green@example.com",
+    "customer_name": "Matthew Green",
+    "subject": "Shipping to international address",
+    "description": "Do you ship to Canada? What are the shipping costs and delivery times?",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "grace.adams@mail.com",
+    "customer_name": "Grace Adams",
+    "subject": "Exchange for different size",
+    "description": "The item I received is too small. Can I exchange it for a larger size? Order #10789.",
+    "order_id": "10789",
+    "source": "web"
+  },
+  {
+    "customer_email": "samuel.baker@company.com",
+    "customer_name": "Samuel Baker",
+    "subject": "Promotional email unsubscribe",
+    "description": "I keep getting promotional emails even though I unsubscribed. Please remove me from your mailing list.",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "chloe.nelson@email.com",
+    "customer_name": "Chloe Nelson",
+    "subject": "Product recall notification?",
+    "description": "I heard there might be a recall on model ABC. Is my order #10567 affected?",
+    "order_id": "10567",
+    "source": "web"
+  },
+  {
+    "customer_email": "christopher.carter@example.com",
+    "customer_name": "Christopher Carter",
+    "subject": "URGENT: Package stolen from porch",
+    "description": "Tracking shows delivered but I never got it. Someone must have stolen it from my porch! What can you do?",
+    "order_id": "10890",
+    "source": "web"
+  },
+  {
+    "customer_email": "zoe.mitchell@mail.com",
+    "customer_name": "Zoe Mitchell",
+    "subject": "Technical support needed",
+    "description": "The product won't turn on. I've tried everything in the manual. Is it defective?",
+    "order_id": "10345",
+    "source": "web"
+  },
+  {
+    "customer_email": "andrew.perez@company.com",
+    "customer_name": "Andrew Perez",
+    "subject": "Loyalty program points",
+    "description": "I should have 500 points but my account only shows 200. Please fix this error.",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "penelope.roberts@email.com",
+    "customer_name": "Penelope Roberts",
+    "subject": "Gift wrapping request",
+    "description": "Can I add gift wrapping to order #10678 before it ships? It's a birthday present.",
+    "order_id": "10678",
+    "source": "web"
+  },
+  {
+    "customer_email": "joseph.turner@example.com",
+    "customer_name": "Joseph Turner",
+    "subject": "Promo code expired error",
+    "description": "The promo code I received says it's expired but the email says valid until next week.",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "layla.phillips@mail.com",
+    "customer_name": "Layla Phillips",
+    "subject": "Order confirmation never received",
+    "description": "I placed an order yesterday but never got a confirmation email. Did it go through? I was charged.",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "ryan.campbell@company.com",
+    "customer_name": "Ryan Campbell",
+    "subject": "Damaged product in transit",
+    "description": "Order #10912 shows delivered damaged according to carrier. What are my options?",
+    "order_id": "10912",
+    "source": "web"
+  },
+  {
+    "customer_email": "aria.parker@email.com",
+    "customer_name": "Aria Parker",
+    "subject": "Subscription auto-renewal question",
+    "description": "When does my subscription renew? I want to cancel before the next billing cycle.",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "nathan.evans@example.com",
+    "customer_name": "Nathan Evans",
+    "subject": "Product availability notification",
+    "description": "The item I want is out of stock. Can you notify me when it's back in stock?",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "hannah.edwards@mail.com",
+    "customer_name": "Hannah Edwards",
+    "subject": "Price match request",
+    "description": "I bought this item yesterday for $99 but now it's on sale for $79. Can you price match?",
+    "order_id": "10543",
+    "source": "web"
+  },
+  {
+    "customer_email": "dylan.collins@company.com",
+    "customer_name": "Dylan Collins",
+    "subject": "Corporate account setup",
+    "description": "I need to set up a corporate account for my company. What's the process?",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "addison.stewart@email.com",
+    "customer_name": "Addison Stewart",
+    "subject": "Return label not received",
+    "description": "I requested a return label 3 days ago but haven't received it yet. Order #10234.",
+    "order_id": "10234",
+    "source": "web"
+  },
+  {
+    "customer_email": "cameron.sanchez@example.com",
+    "customer_name": "Cameron Sanchez",
+    "subject": "Express shipping upgrade",
+    "description": "Can I upgrade order #10456 to express shipping? I need it faster than standard.",
+    "order_id": "10456",
+    "source": "web"
+  },
+  {
+    "customer_email": "nora.morris@mail.com",
+    "customer_name": "Nora Morris",
+    "subject": "Product user manual request",
+    "description": "I lost the user manual that came with my product. Can you email me a digital copy?",
+    "order_id": "10789",
+    "source": "web"
+  },
+  {
+    "customer_email": "elijah.rogers@company.com",
+    "customer_name": "Elijah Rogers",
+    "subject": "Website checkout error",
+    "description": "I keep getting an error at checkout. It says 'payment processing failed' but my card is fine.",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "aubrey.reed@email.com",
+    "customer_name": "Aubrey Reed",
+    "subject": "Allergy information request",
+    "description": "Does this product contain any allergens? I need to know before using it.",
+    "order_id": "10567",
+    "source": "web"
+  },
+  {
+    "customer_email": "logan.cook@example.com",
+    "customer_name": "Logan Cook",
+    "subject": "Order split into multiple shipments",
+    "description": "Why was my order #10890 split into 3 different shipments? When will everything arrive?",
+    "order_id": "10890",
+    "source": "web"
+  },
+  {
+    "customer_email": "luna.morgan@mail.com",
+    "customer_name": "Luna Morgan",
+    "subject": "Product dimensions needed",
+    "description": "What are the exact dimensions of the product? The website doesn't have this info.",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "carter.bell@company.com",
+    "customer_name": "Carter Bell",
+    "subject": "Defective product replacement",
+    "description": "This is the 2nd defective unit I've received for order #10345. I want a full refund now!",
+    "order_id": "10345",
+    "source": "web"
+  },
+  {
+    "customer_email": "stella.murphy@email.com",
+    "customer_name": "Stella Murphy",
+    "subject": "Student discount inquiry",
+    "description": "Do you offer student discounts? I have a valid student ID.",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "wyatt.bailey@example.com",
+    "customer_name": "Wyatt Bailey",
+    "subject": "Customs fee unexpected charge",
+    "description": "I had to pay $45 in customs fees that I wasn't told about. Will you reimburse this?",
+    "order_id": "10678",
+    "source": "web"
+  },
+  {
+    "customer_email": "violet.rivera@mail.com",
+    "customer_name": "Violet Rivera",
+    "subject": "Product review submission issue",
+    "description": "I'm trying to leave a review but the website keeps giving me an error.",
+    "order_id": "10123",
+    "source": "web"
+  },
+  {
+    "customer_email": "grayson.cooper@company.com",
+    "customer_name": "Grayson Cooper",
+    "subject": "Military discount available?",
+    "description": "I'm an active duty military member. Do you offer military discounts?",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "hazel.richardson@email.com",
+    "customer_name": "Hazel Richardson",
+    "subject": "Birthday discount not working",
+    "description": "It's my birthday month and I should get a discount but the code isn't working.",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "leo.cox@example.com",
+    "customer_name": "Leo Cox",
+    "subject": "Product safety certification",
+    "description": "Is this product UL certified? I need proof for insurance purposes.",
+    "order_id": "10912",
+    "source": "web"
+  },
+  {
+    "customer_email": "aurora.howard@mail.com",
+    "customer_name": "Aurora Howard",
+    "subject": "Incorrect item quantity shipped",
+    "description": "I ordered 5 units but only received 3. Order #10543. Where are the other 2?",
+    "order_id": "10543",
+    "source": "web"
+  },
+  {
+    "customer_email": "landon.ward@company.com",
+    "customer_name": "Landon Ward",
+    "subject": "Eco-friendly packaging question",
+    "description": "Do you use recyclable packaging materials? I want to make sustainable choices.",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "savannah.torres@email.com",
+    "customer_name": "Savannah Torres",
+    "subject": "Order tracking stuck",
+    "description": "My tracking hasn't updated in 5 days. Is my package lost? Order #10234.",
+    "order_id": "10234",
+    "source": "web"
+  },
+  {
+    "customer_email": "easton.peterson@example.com",
+    "customer_name": "Easton Peterson",
+    "subject": "Account deletion request",
+    "description": "I want to permanently delete my account and all my personal data per GDPR.",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "skylar.gray@mail.com",
+    "customer_name": "Skylar Gray",
+    "subject": "Product color options",
+    "description": "The blue is out of stock. Do you know when it will be available? Or can I get it in a different color?",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "maverick.ramirez@company.com",
+    "customer_name": "Maverick Ramirez",
+    "subject": "Trade-in program information",
+    "description": "Do you have a trade-in program for old products? What's the process?",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "brooklyn.james@email.com",
+    "customer_name": "Brooklyn James",
+    "subject": "Package requires signature",
+    "description": "I won't be home to sign for delivery. Can you waive the signature requirement for order #10456?",
+    "order_id": "10456",
+    "source": "web"
+  },
+  {
+    "customer_email": "austin.watson@example.com",
+    "customer_name": "Austin Watson",
+    "subject": "Product certification documents",
+    "description": "I need the CE certification documents for compliance purposes. Can you provide them?",
+    "order_id": "10789",
+    "source": "web"
+  },
+  {
+    "customer_email": "paisley.brooks@mail.com",
+    "customer_name": "Paisley Brooks",
+    "subject": "Wholesale pricing inquiry",
+    "description": "I own a retail store. What are your wholesale prices and minimum order quantities?",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "kayden.kelly@company.com",
+    "customer_name": "Kayden Kelly",
+    "subject": "Product ingredients list",
+    "description": "Can you provide a full ingredients list? It's not on the packaging.",
+    "order_id": "10567",
+    "source": "web"
+  },
+  {
+    "customer_email": "piper.sanders@email.com",
+    "customer_name": "Piper Sanders",
+    "subject": "Order never arrived",
+    "description": "It's been 3 weeks and order #10890 never arrived. Tracking says delivered but I didn't get it!",
+    "order_id": "10890",
+    "source": "web"
+  },
+  {
+    "customer_email": "asher.price@example.com",
+    "customer_name": "Asher Price",
+    "subject": "Payment plan available?",
+    "description": "This is an expensive item. Do you offer payment plans or financing options?",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "kinsley.bennett@mail.com",
+    "customer_name": "Kinsley Bennett",
+    "subject": "Product manufacturing location",
+    "description": "Where is this product manufactured? I prefer to buy American-made products.",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "axel.wood@company.com",
+    "customer_name": "Axel Wood",
+    "subject": "Referral program details",
+    "description": "Do you have a referral program? How does it work and what are the rewards?",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "ellie.barnes@email.com",
+    "customer_name": "Ellie Barnes",
+    "subject": "Order modification request",
+    "description": "I want to add another item to order #10345 before it ships. Is that possible?",
+    "order_id": "10345",
+    "source": "web"
+  },
+  {
+    "customer_email": "jaxon.ross@example.com",
+    "customer_name": "Jaxon Ross",
+    "subject": "Product cleaning instructions",
+    "description": "How do I clean and maintain this product? The manual doesn't have clear instructions.",
+    "order_id": "10678",
+    "source": "web"
+  },
+  {
+    "customer_email": "nova.henderson@mail.com",
+    "customer_name": "Nova Henderson",
+    "subject": "Shipping insurance claim",
+    "description": "My package was damaged during shipping. How do I file an insurance claim?",
+    "order_id": "10123",
+    "source": "web"
+  },
+  {
+    "customer_email": "levi.coleman@company.com",
+    "customer_name": "Levi Coleman",
+    "subject": "Product comparison needed",
+    "description": "What's the difference between model A and model B? I can't decide which to buy.",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "alice.jenkins@email.com",
+    "customer_name": "Alice Jenkins",
+    "subject": "Extended warranty purchase",
+    "description": "Can I purchase an extended warranty for order #10912? How much does it cost?",
+    "order_id": "10912",
+    "source": "web"
+  },
+  {
+    "customer_email": "roman.perry@example.com",
+    "customer_name": "Roman Perry",
+    "subject": "Product bundle discount",
+    "description": "If I buy 3 items together, do I get a bundle discount?",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "ivy.powell@mail.com",
+    "customer_name": "Ivy Powell",
+    "subject": "Damaged packaging replacement",
+    "description": "The product is fine but the box is damaged. I bought it as a gift. Can you send new packaging?",
+    "order_id": "10543",
+    "source": "web"
+  },
+  {
+    "customer_email": "theo.long@company.com",
+    "customer_name": "Theo Long",
+    "subject": "Product expiration date",
+    "description": "What's the expiration date on the product I ordered? It's not labeled clearly.",
+    "order_id": "10234",
+    "source": "web"
+  },
+  {
+    "customer_email": "willow.patterson@email.com",
+    "customer_name": "Willow Patterson",
+    "subject": "Newsletter signup not working",
+    "description": "I'm trying to sign up for your newsletter but the form keeps giving me an error.",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "miles.hughes@example.com",
+    "customer_name": "Miles Hughes",
+    "subject": "Product video tutorial",
+    "description": "Do you have video tutorials for setup? The written instructions are confusing.",
+    "order_id": "10456",
+    "source": "web"
+  },
+  {
+    "customer_email": "ruby.flores@mail.com",
+    "customer_name": "Ruby flores",
+    "subject": "Billing address update",
+    "description": "I need to update my billing address for future orders. How do I do this in my account?",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "ezra.washington@company.com",
+    "customer_name": "Ezra Washington",
+    "subject": "Corporate discount code",
+    "description": "My company has a partnership with you. How do I get the corporate discount code?",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "clara.butler@email.com",
+    "customer_name": "Clara Butler",
+    "subject": "Product trial period",
+    "description": "Do you offer a trial period? I want to test it before committing to keep it.",
+    "order_id": "10789",
+    "source": "web"
+  },
+  {
+    "customer_email": "hudson.simmons@example.com",
+    "customer_name": "Hudson Simmons",
+    "subject": "Delivery instructions not followed",
+    "description": "I left special delivery instructions but the driver didn't follow them. Package was left in the rain!",
+    "order_id": "10567",
+    "source": "web"
+  },
+  {
+    "customer_email": "eden.foster@mail.com",
+    "customer_name": "Eden Foster",
+    "subject": "Product upgrade path",
+    "description": "I have the old model. Is there an upgrade discount if I buy the new model?",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "colton.gonzales@company.com",
+    "customer_name": "Colton Gonzales",
+    "subject": "Backorder status update",
+    "description": "My item has been on backorder for a month. When will it ship? Order #10890.",
+    "order_id": "10890",
+    "source": "web"
+  },
+  {
+    "customer_email": "quinn.bryant@email.com",
+    "customer_name": "Quinn Bryant",
+    "subject": "Product compatibility with accessories",
+    "description": "Will the ABC accessory work with the XYZ product I just ordered?",
+    "order_id": "10345",
+    "source": "web"
+  },
+  {
+    "customer_email": "jasper.alexander@example.com",
+    "customer_name": "Jasper Alexander",
+    "subject": "Store credit instead of refund",
+    "description": "Can I get store credit instead of a refund for my return? I'll use it for future purchases.",
+    "order_id": "10678",
+    "source": "web"
+  },
+  {
+    "customer_email": "elena.russell@mail.com",
+    "customer_name": "Elena Russell",
+    "subject": "Product energy consumption",
+    "description": "How much electricity does this product use per month? I need to know for budgeting.",
+    "order_id": "10123",
+    "source": "web"
+  },
+  {
+    "customer_email": "bennett.griffin@company.com",
+    "customer_name": "Bennett Griffin",
+    "subject": "Duplicate account issue",
+    "description": "I accidentally created 2 accounts with different emails. Can you merge them?",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "iris.diaz@email.com",
+    "customer_name": "Iris Diaz",
+    "subject": "VIP membership benefits",
+    "description": "What are the benefits of VIP membership? Is it worth upgrading?",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "silas.hayes@example.com",
+    "customer_name": "Silas Hayes",
+    "subject": "Product noise level",
+    "description": "How loud is this product when running? I live in an apartment with thin walls.",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "athena.myers@mail.com",
+    "customer_name": "Athena Myers",
+    "subject": "Group order coordination",
+    "description": "I'm organizing a group order for my office. Can you help coordinate this?",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "waylon.ford@company.com",
+    "customer_name": "Waylon Ford",
+    "subject": "Product weight information",
+    "description": "What does this product weigh? I need to know for shipping calculation purposes.",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "adaline.hamilton@email.com",
+    "customer_name": "Adaline Hamilton",
+    "subject": "Seasonal storage recommendations",
+    "description": "How should I store this product when not in use? Any special requirements?",
+    "order_id": "10912",
+    "source": "web"
+  },
+  {
+    "customer_email": "cash.graham@example.com",
+    "customer_name": "Cash Graham",
+    "subject": "Product lifespan expectancy",
+    "description": "How long should this product last with normal use? What's the average lifespan?",
+    "order_id": "10543",
+    "source": "web"
+  },
+  {
+    "customer_email": "ophelia.sullivan@mail.com",
+    "customer_name": "Ophelia Sullivan",
+    "subject": "Charitable donation option",
+    "description": "Do you have a program where I can donate my old product when I buy a new one?",
+    "order_id": "",
+    "source": "web"
+  },
+  {
+    "customer_email": "phoenix.wallace@company.com",
+    "customer_name": "Phoenix Wallace",
+    "subject": "Product firmware update",
+    "description": "Is there a firmware update available for this product? How do I install it?",
+    "order_id": "10234",
+    "source": "web"
+  }
+]

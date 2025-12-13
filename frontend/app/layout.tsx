@@ -9,6 +9,10 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'Customer Support Copilot - AI-Powered Support Platform',
   description: 'Intelligent ticket management with AI classification, automated replies, and predictive analytics',
+  icons: {
+    icon: '/favicon.svg',
+    apple: '/apple-touch-icon.svg',
+  },
 };
 
 export default function RootLayout({

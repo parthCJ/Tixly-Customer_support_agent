@@ -22,3 +22,8 @@ scikit-learn==1.3.2
 # Utilities
 python-dateutil==2.8.2
 requests==2.31.0
+
+# Authentication (OAuth 2.0 / JWT)
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.6

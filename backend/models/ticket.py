@@ -73,6 +73,7 @@ class Ticket(BaseModel):
     ai_confidence: Optional[float] = Field(None, description="AI confidence score (0-1)")
     
     # AI analysis fields
+    ai_analysis: Optional[Dict[str, Any]] = Field(None, description="Complete AI analysis result")
     sentiment: Optional[str] = Field(None, description="Customer sentiment: positive, neutral, or negative")
     urgency_keywords: list[str] = Field(default_factory=list, description="Detected urgency indicators")
     extracted_metadata: Dict[str, Any] = Field(default_factory=dict, description="AI-extracted entities (order_id, amounts, dates)")

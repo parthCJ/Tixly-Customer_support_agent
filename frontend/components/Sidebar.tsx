@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, Users, BarChart3, Settings, LogOut, Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import Logo, { LogoCompact } from './Logo';
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -20,7 +21,10 @@ export default function Sidebar() {
     <>
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 flex h-16 items-center justify-between bg-gray-900 px-4 border-b border-gray-800">
-        <h1 className="text-lg font-bold text-white">Support Copilot</h1>
+        <div className="flex items-center gap-3">
+          <LogoCompact size={32} />
+          <h1 className="text-lg font-bold text-white">Support Copilot</h1>
+        </div>
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="text-white p-2 hover:bg-gray-800 rounded-lg transition-colors"
@@ -47,7 +51,8 @@ export default function Sidebar() {
         lg:mt-0 mt-16
       `}>
       {/* Logo - Hidden on mobile, shown on desktop */}
-      <div className="hidden lg:flex h-16 items-center justify-center border-b border-gray-800">
+      <div className="hidden lg:flex h-16 items-center justify-center gap-3 border-b border-gray-800">
+        <Logo size={40} />
         <h1 className="text-xl font-bold text-white">Support Copilot</h1>
       </div>
 

@@ -23,15 +23,24 @@ export default function SubmitTicketPage() {
     setLoading(true);
 
     try {
-      console.log('Submitting to:', `${API_URL}/api/tickets/create`);
+      console.log('Submitting to:', `${API_URL}/api/tickets/create/`);
       console.log('Form data:', formData);
       
+      // Prepare data - remove empty optional fields
+      const ticketData = {
+        customer_name: formData.customer_name,
+        customer_email: formData.customer_email,
+        subject: formData.subject,
+        description: formData.description,
+        source: 'web',
+        ...(formData.order_id && { order_id: formData.order_id }) // Only include if not empty
+      };
+      
+      console.log('Sending ticket data:', ticketData);
+      
       const response = await axios.post(
-        `${API_URL}/api/tickets/create`, 
-        {
-          ...formData,
-          source: 'web',
-        },
+        `${API_URL}/api/tickets/create/`, 
+        ticketData,
         {
           timeout: 60000, // 60 second timeout for cold starts
           headers: {
@@ -52,6 +61,11 @@ export default function SubmitTicketPage() {
       console.error('Error response:', error.response?.data);
       console.error('Error status:', error.response?.status);
       console.error('Error message:', error.message);
+      
+      // Show detailed validation errors
+      if (error.response?.data?.detail) {
+        console.error('Validation errors:', JSON.stringify(error.response.data.detail, null, 2));
+      }
       
       if (error.code === 'ECONNABORTED') {
         toast.error('Request timeout - backend may be waking up. Please try again in 30 seconds.');

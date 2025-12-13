@@ -2,7 +2,7 @@
 Ticket Creation API Endpoint
 Handles incoming ticket creation requests from various sources
 """
-from fastapi import APIRouter, HTTPException, BackgroundTasks, Query
+from fastapi import APIRouter, HTTPException, BackgroundTasks, Query, Depends
 from datetime import datetime
 import uuid
 from typing import Optional
@@ -16,6 +16,7 @@ from ..models.ticket import (
     TicketPriority,
     TicketCategory
 )
+from ..models.user import User, UserRole
 
 # Import agent management functions
 from . import agents as agents_api
@@ -85,6 +86,19 @@ async def process_ticket_with_ai(ticket: Ticket):
         ticket.sentiment = classification["sentiment"]
         ticket.urgency_keywords = classification["urgency_keywords"]
         ticket.extracted_metadata = classification["extracted_info"]
+        
+        # Store complete AI analysis as a dictionary (this will be serialized in the response)
+        ticket.ai_analysis = {
+            "category": classification["category"],
+            "priority": classification["priority"],
+            "confidence": classification["confidence"],
+            "sentiment": classification["sentiment"],
+            "urgency_keywords": classification["urgency_keywords"],
+            "extracted_info": classification["extracted_info"],
+            "reasoning": classification.get("reasoning", "")
+        }
+        
+        print(f"   📊 AI Analysis stored: {ticket.ai_analysis}")
         
         # Auto-assign category and priority if confidence is high
         category_changed = False
@@ -172,7 +186,7 @@ async def create_ticket(
     Create a new support ticket
     
     This endpoint receives ticket data from various sources:
-    - Web forms
+    - Web forms (public or authenticated)
     - Email (via webhook)
     - Chat systems
     - Support platforms (Zendesk, Intercom, etc.)
@@ -183,6 +197,8 @@ async def create_ticket(
     3. Create ticket record
     4. Queue for AI processing (background)
     5. Return ticket info immediately
+    
+    Note: Authentication is optional to support webhooks and public forms
     """
     try:
         # Generate IDs

@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 import asyncio
 from datetime import datetime
-from .api import tickets, forecasting, agents
+from .api import tickets, forecasting, agents, auth
 
 app = FastAPI(
     title="Customer Support Copilot",
@@ -37,6 +37,7 @@ app.add_middleware(
 )
 
 # Routers
+app.include_router(auth.router)  # Auth router first
 app.include_router(tickets.router)
 app.include_router(forecasting.router)
 app.include_router(agents.router)

@@ -18,6 +18,9 @@ export function TicketReplyModal({ ticket, onClose }: TicketReplyModalProps) {
   const [replyText, setReplyText] = useState(ticket.ai_suggested_reply || '');
   const [isUsingAISuggestion, setIsUsingAISuggestion] = useState(true);
   const queryClient = useQueryClient();
+  
+  // Check if ticket is already resolved
+  const isResolved = ticket.status === TicketStatus.RESOLVED || ticket.status === 'resolved';
 
   // Mutation for updating ticket status
   // uses the optimistic updates so that UI updates immediatly before API call to POST ex changes the Status from new -> Resolved.
@@ -249,35 +252,43 @@ export function TicketReplyModal({ ticket, onClose }: TicketReplyModalProps) {
         {/* Footer - Actions */}
         <div className="p-4 sm:p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-              This will send the reply and mark the ticket as resolved
-            </div>
+            {isResolved ? (
+              <div className="text-xs sm:text-sm text-green-600 dark:text-green-400 font-medium">
+                This ticket has already been resolved
+              </div>
+            ) : (
+              <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                This will send the reply and mark the ticket as resolved
+              </div>
+            )}
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
               <Button
                 variant="secondary"
                 onClick={onClose}
                 className="w-full sm:w-auto text-xs sm:text-sm"
               >
-                Cancel
+                {isResolved ? 'Close' : 'Cancel'}
               </Button>
-              <Button
-                variant="primary"
-                onClick={handleSendReply}
-                disabled={!replyText.trim() || resolveTicketMutation.isPending}
-                className="w-full sm:w-auto text-xs sm:text-sm"
-              >
-                {resolveTicketMutation.isPending ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    <Send className="h-3 sm:h-4 w-3 sm:w-4 mr-2" />
-                    Send Reply & Resolve
-                  </>
-                )}
-              </Button>
+              {!isResolved && (
+                <Button
+                  variant="primary"
+                  onClick={handleSendReply}
+                  disabled={!replyText.trim() || resolveTicketMutation.isPending}
+                  className="w-full sm:w-auto text-xs sm:text-sm"
+                >
+                  {resolveTicketMutation.isPending ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-3 sm:h-4 w-3 sm:w-4 mr-2" />
+                      Send Reply & Resolve
+                    </>
+                  )}
+                </Button>
+              )}
             </div>
           </div>
         </div>

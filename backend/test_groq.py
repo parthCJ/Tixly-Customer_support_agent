@@ -3,7 +3,16 @@ Quick test script to verify Groq API key works
 Run this in HF Space to diagnose AI service issues
 """
 import os
+from pathlib import Path
+from dotenv import load_dotenv
 from groq import Groq
+
+# Load .env file from root directory
+root_dir = Path(__file__).parent.parent
+env_path = root_dir / '.env'
+load_dotenv(env_path)
+print(f"Loading .env from: {env_path}")
+print(f".env exists: {env_path.exists()}")
 
 print("=" * 50)
 print("🔍 Groq API Key Test")

@@ -188,7 +188,7 @@ export default function SubmitTicketPage() {
             <span className="text-xs text-gray-600 bg-white px-2 py-1 rounded">For Testing</span>
           </div>
           <p className="text-xs sm:text-sm text-gray-600 mb-4">
-            Click any button to instantly submit a demo ticket (great for showcasing!)
+            Click any button to instantly submit a demo ticket
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
             <button

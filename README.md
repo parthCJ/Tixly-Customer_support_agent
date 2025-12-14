@@ -1,4 +1,4 @@
-# 🎫 Tixly - AI Customer Support Copilot
+﻿# Tixly - AI Customer Support Copilot
 
 > AI-powered customer support ticket management system with automated classification, smart routing, and knowledge base integration.
 
@@ -8,31 +8,31 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python)](https://www.python.org/)
-[![Hugging Face](https://img.shields.io/badge/🤗%20Hugging%20Face-Spaces-yellow)](https://huggingface.co/spaces)
+[![Hugging Face](https://img.shields.io/badge/Hugging%20Face-Spaces-yellow)](https://huggingface.co/spaces)
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-### 🎯 **AI-Powered Classification**
+### **AI-Powered Classification**
 - Automatic ticket categorization using **Groq LLaMA 3.1** (70B parameters)
 - Priority detection based on urgency keywords and sentiment
 - **95%+ accuracy** on real-world support tickets
 - Processes tickets in **< 2 seconds**
 
-### 💬 **Intelligent Reply Suggestions**
+### **Intelligent Reply Suggestions**
 - AI-generated draft responses for every ticket
 - Context-aware using ticket history and customer data
 - One-click editing for agents
-- **Reduces response time from 5 min → 30 sec**
+- **Reduces response time from 5 min  30 sec**
 
-### 🔍 **RAG Knowledge Base**
+### **RAG Knowledge Base**
 - Semantic search powered by ChromaDB vector database
 - 10+ pre-loaded help articles
 - Automatic article suggestions based on ticket content
 - Embeddings-based retrieval for accurate matching
 
-### 📊 **Predictive Analytics**
+### **Predictive Analytics**
 - LSTM neural network for 7-day ticket volume forecasting
 - Staff optimization recommendations
 - Real-time dashboard with agent performance metrics
@@ -40,29 +40,29 @@
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```
-┌─────────────────┐      ┌──────────────────┐      ┌─────────────────┐
-│   Next.js 14   │◄────►│   FastAPI        │◄────►│   Groq API      │
-│   Frontend      │      │   Backend        │      │   (LLaMA 3.1)   │
-│                 │      │                  │      └─────────────────┘
-│  - TypeScript   │      │  - Python 3.11   │
-│  - Tailwind CSS │      │  - Async/Await   │      ┌─────────────────┐
-│  - React Query  │      │  - Background    │◄────►│   ChromaDB      │
-└─────────────────┘      │    Tasks         │      │   Vector DB     │
-                         └──────────────────┘      └─────────────────┘
-                                  │
-                                  ▼
-                         ┌──────────────────┐
-                         │   TensorFlow     │
-                         │   LSTM Model     │
-                         └──────────────────┘
+            
+   Next.js 14      FastAPI           Groq API      
+   Frontend               Backend                 (LLaMA 3.1)   
+                                               
+  - TypeScript           - Python 3.11   
+  - Tailwind CSS         - Async/Await         
+  - React Query          - Background       ChromaDB      
+          Tasks                  Vector DB     
+                               
+                                  
+                                  
+                         
+                            TensorFlow     
+                            LSTM Model     
+                         
 ```
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### **Prerequisites**
 - Node.js 18+ and npm
@@ -120,7 +120,7 @@ npm run dev
 
 ---
 
-## 📊 Performance Metrics
+## Performance Metrics
 
 | Metric | Before AI | With AI | Improvement |
 |--------|-----------|---------|-------------|
@@ -131,7 +131,7 @@ npm run dev
 
 ---
 
-## 🎮 Usage
+## Usage
 
 ### **Creating Tickets**
 
@@ -154,7 +154,7 @@ npm run dev
 
 {
 
-## 🚀 Quick Start  "customer_email": "john.doe@example.com",
+##  Quick Start  "customer_email": "john.doe@example.com",
 
   "customer_name": "John Doe",
 
@@ -252,11 +252,11 @@ Frontend runs at: **http://localhost:3000**---
 
 
 
----## 🔍 Understanding the Code
+---##  Understanding the Code
 
 
 
-## 📊 Performance Metrics### 1. Ticket Model (`models/ticket.py`)
+##  Performance Metrics### 1. Ticket Model (`models/ticket.py`)
 
 
 
@@ -278,7 +278,7 @@ Frontend runs at: **http://localhost:3000**---
 
     status: TicketStatus     # new, open, in_progress, resolved, closed
 
-## 🎮 Usage    priority: TicketPriority # low, medium, high, critical
+##  Usage    priority: TicketPriority # low, medium, high, critical
 
     # ... and more fields
 
@@ -292,7 +292,7 @@ Frontend runs at: **http://localhost:3000**---
 
 ```json- `customer_id`: Auto-generated from email (in production, lookup real customer)
 
-{- `status`: Tracks ticket lifecycle (NEW → OPEN → IN_PROGRESS → RESOLVED → CLOSED)
+{- `status`: Tracks ticket lifecycle (NEW  OPEN  IN_PROGRESS  RESOLVED  CLOSED)
 
   "customer_email": "customer@example.com",- `priority`: How urgent (LOW, MEDIUM, HIGH, CRITICAL)
 
@@ -346,7 +346,7 @@ Frontend runs at: **http://localhost:3000**---
 
 GET /api/tickets/
 
-## 🛠️ Tech Stack```
+##  Tech Stack```
 
 - Lists all tickets (with optional filtering)
 
@@ -378,109 +378,109 @@ GET /api/tickets/
 
 
 
-## 📁 Project Structure---
+##  Project Structure---
 
 
 
-```## 🔄 Data Flow Diagram
+```##  Data Flow Diagram
 
-├── backend/
+ backend/
 
-│   ├── main.py                    # FastAPI app```
+    main.py                    # FastAPI app```
 
-│   ├── api/Customer Submits Ticket
+    api/Customer Submits Ticket
 
-│   │   ├── tickets.py             # Ticket endpoints         ↓
+       tickets.py             # Ticket endpoints         
 
-│   │   ├── agents.py              # Agent management┌────────────────────────┐
+       agents.py              # Agent management
 
-│   │   └── forecasting.py         # Predictions│  POST /api/tickets/    │
+       forecasting.py         # Predictions  POST /api/tickets/    
 
-│   ├── services/│  create                │
+    services/  create                
 
-│   │   ├── ai_service.py          # Groq integration└────────────────────────┘
+       ai_service.py          # Groq integration
 
-│   │   ├── kb_service.py          # RAG search         ↓
+       kb_service.py          # RAG search         
 
-│   │   └── forecasting_service.py # LSTM forecasting┌────────────────────────┐
+       forecasting_service.py # LSTM forecasting
 
-│   └── models/│  Validate Data         │
+    models/  Validate Data         
 
-│       └── lstm_forecast.h5       # Trained model│  - Check required      │
+        lstm_forecast.h5       # Trained model  - Check required      
 
-││    fields              │
+    fields              
 
-├── frontend/│  - Validate email      │
+ frontend/  - Validate email      
 
-│   ├── app/└────────────────────────┘
+    app/
 
-│   │   ├── agent/page.tsx         # Agent dashboard         ↓
+       agent/page.tsx         # Agent dashboard         
 
-│   │   ├── manager/page.tsx       # Manager analytics┌────────────────────────┐
+       manager/page.tsx       # Manager analytics
 
-│   │   └── settings/page.tsx      # Settings│  Generate IDs          │
+       settings/page.tsx      # Settings  Generate IDs          
 
-│   └── components/│  - ticket_id           │
+    components/  - ticket_id           
 
-│       ├── TicketReplyModal.tsx   # Reply interface│  - customer_id         │
+        TicketReplyModal.tsx   # Reply interface  - customer_id         
 
-│       └── Sidebar.tsx            # Navigation└────────────────────────┘
+        Sidebar.tsx            # Navigation
 
-```         ↓
+```         
 
-┌────────────────────────┐
 
----│  Create Ticket Object  │
 
-│  - Set status: NEW     │
+---  Create Ticket Object  
 
-## 🔮 Roadmap│  - Set priority: MED   │
+  - Set status: NEW     
 
-│  - Add timestamps      │
+##  Roadmap  - Set priority: MED   
 
-- [x] AI ticket classification└────────────────────────┘
+  - Add timestamps      
 
-- [x] Reply suggestions         ↓
+- [x] AI ticket classification
 
-- [x] RAG knowledge base┌────────────────────────┐
+- [x] Reply suggestions         
 
-- [x] LSTM forecasting│  Store in Database     │
+- [x] RAG knowledge base
 
-- [ ] PostgreSQL database│  (In-memory for now)   │
+- [x] LSTM forecasting  Store in Database     
 
-- [ ] Email sending (SMTP)└────────────────────────┘
+- [ ] PostgreSQL database  (In-memory for now)   
 
-- [ ] Authentication         ↓
+- [ ] Email sending (SMTP)
 
-- [ ] WebSocket real-time updates┌────────────────────────┐
+- [ ] Authentication         
 
-│  Queue AI Processing   │
+- [ ] WebSocket real-time updates
 
----│  (Background task)     │
+  Queue AI Processing   
 
-└────────────────────────┘
+---  (Background task)     
 
-## 👨‍💻 Author         ↓
 
-┌────────────────────────┐
 
-**Parth CJ**│  Return Response       │
+##  Author         
 
-- GitHub: [@parthCJ](https://github.com/parthCJ)│  - Ticket details      │
 
-- Repository: [Tixly-Customer_support_agent](https://github.com/parthCJ/Tixly-Customer_support_agent)│  - Confirmation        │
 
-└────────────────────────┘
+**Parth CJ**  Return Response       
+
+- GitHub: [@parthCJ](https://github.com/parthCJ)  - Ticket details      
+
+- Repository: [Tixly-Customer_support_agent](https://github.com/parthCJ/Tixly-Customer_support_agent)  - Confirmation        
+
+
 
 ---```
 
 
 
-## 📄 License---
+##  License---
 
 
 
-MIT License - see LICENSE file for details## 🧪 Testing Examples
+MIT License - see LICENSE file for details##  Testing Examples
 
 
 
@@ -492,11 +492,11 @@ MIT License - see LICENSE file for details## 🧪 Testing Examples
 
 {
 
-**⭐ Star this repo if you found it helpful!**  "customer_email": "customer1@example.com",
+** Star this repo if you found it helpful!**  "customer_email": "customer1@example.com",
 
   "subject": "Order delayed",
 
-Made with ❤️ using Next.js, FastAPI, and AI  "description": "Order #5432 was supposed to arrive yesterday but tracking shows it's still in transit",
+Made with  using Next.js, FastAPI, and AI  "description": "Order #5432 was supposed to arrive yesterday but tracking shows it's still in transit",
 
   "order_id": "5432",
 
@@ -529,7 +529,7 @@ Made with ❤️ using Next.js, FastAPI, and AI  "description": "Order #5432 was
 
 ---
 
-## 📊 What You Get Back
+##  What You Get Back
 
 When you create a ticket, you get a response like this:
 
@@ -559,7 +559,7 @@ When you create a ticket, you get a response like this:
 
 ---
 
-## 🔌 Webhook Integration
+##  Webhook Integration
 
 ### Zendesk Webhook Example
 
@@ -607,7 +607,7 @@ POST http://your-domain.com/api/tickets/webhook/intercom
 
 ---
 
-## 🎯 Next Steps
+##  Next Steps
 
 Now that tickets can be created, we'll add:
 
@@ -633,7 +633,7 @@ Now that tickets can be created, we'll add:
 
 ---
 
-## 💡 Tips
+##  Tips
 
 **Current Storage:**
 - Tickets are stored in memory (`tickets_db` dictionary)
@@ -652,7 +652,7 @@ Now that tickets can be created, we'll add:
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Server won't start
 ```bash
@@ -682,7 +682,7 @@ pip install -r requirements.txt
 
 ---
 
-## 📚 Learn More
+##  Learn More
 
 - **FastAPI Docs**: https://fastapi.tiangolo.com/
 - **Pydantic Models**: https://docs.pydantic.dev/
@@ -690,6 +690,8 @@ pip install -r requirements.txt
 
 ---
 
-**Ready to test?** Start the server and create your first ticket! 🚀
+**Ready to test?** Start the server and create your first ticket! 
 
 In the next phase, we'll add AI to automatically classify and process these tickets.
+
+

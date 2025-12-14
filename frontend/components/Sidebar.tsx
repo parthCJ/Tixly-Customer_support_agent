@@ -22,8 +22,7 @@ export default function Sidebar() {
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 flex h-16 items-center justify-between bg-gray-900 px-4 border-b border-gray-800">
         <div className="flex items-center gap-3">
-          <LogoCompact size={44} />
-          <h1 className="text-2xl font-bold text-white">Tixly</h1>
+          <img src="/tixly-logo.svg" alt="Tixly" className="h-10" />
         </div>
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

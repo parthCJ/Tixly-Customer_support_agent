@@ -168,9 +168,12 @@ export default function SubmitTicketPage() {
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Header */}
         <div className="text-center mb-6 sm:mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+          <div className="flex items-center justify-center mb-4">
+            <img src="/tixly-logo.svg" alt="Tixly" className="h-24 sm:h-32" />
+          </div>
+          <p className="text-lg sm:text-xl font-semibold text-gray-700 mb-2">
             AI Support Copilot
-          </h1>
+          </p>
           <p className="text-base sm:text-lg text-gray-600 px-4">
             Submit your support ticket and get instant AI-powered assistance
           </p>

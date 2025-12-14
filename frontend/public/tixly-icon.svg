@@ -1,0 +1,16 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer Circle -->
+  <circle cx="256" cy="256" r="230" fill="none" stroke="black" stroke-width="20"/>
+  
+  <!-- First Ticket (Back) -->
+  <rect x="150" y="180" width="180" height="120" rx="8" fill="black" transform="rotate(-25 256 256)"/>
+  
+  <!-- Ticket Perforation Line on First Ticket -->
+  <line x1="180" y1="200" x2="180" y2="280" stroke="white" stroke-width="3" stroke-dasharray="8 8" transform="rotate(-25 256 256)"/>
+  
+  <!-- Second Ticket (Front) -->
+  <rect x="200" y="220" width="180" height="120" rx="8" fill="black" transform="rotate(-20 256 256)"/>
+  
+  <!-- Ticket Perforation Line on Second Ticket -->
+  <line x1="230" y1="240" x2="230" y2="320" stroke="white" stroke-width="3" stroke-dasharray="8 8" transform="rotate(-20 256 256)"/>
+</svg>

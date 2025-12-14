@@ -1,0 +1,19 @@
+<svg width="800" height="400" viewBox="0 0 800 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Tixly - Handwritten style -->
+  <text x="400" y="180" 
+        font-family="'Brush Script MT', 'Lucida Handwriting', 'Apple Chancery', cursive" 
+        font-size="140" 
+        fill="#EA6B66" 
+        text-anchor="middle"
+        font-weight="400"
+        font-style="italic">Tixly</text>
+  
+  <!-- Customers Care subtitle -->
+  <text x="400" y="280" 
+        font-family="'Segoe UI', Arial, sans-serif" 
+        font-size="50" 
+        fill="#6B7280" 
+        text-anchor="middle"
+        font-weight="600"
+        letter-spacing="2">Customers Care</text>
+</svg>

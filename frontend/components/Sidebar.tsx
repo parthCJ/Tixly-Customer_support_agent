@@ -22,8 +22,8 @@ export default function Sidebar() {
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 flex h-16 items-center justify-between bg-gray-900 px-4 border-b border-gray-800">
         <div className="flex items-center gap-3">
-          <LogoCompact size={32} />
-          <h1 className="text-lg font-bold text-white">Support Copilot</h1>
+          <LogoCompact size={44} />
+          <h1 className="text-2xl font-bold text-white">Tixly</h1>
         </div>
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -51,9 +51,8 @@ export default function Sidebar() {
         lg:mt-0 mt-16
       `}>
       {/* Logo - Hidden on mobile, shown on desktop */}
-      <div className="hidden lg:flex h-16 items-center justify-center gap-3 border-b border-gray-800">
-        <Logo size={40} />
-        <h1 className="text-xl font-bold text-white">Support Copilot</h1>
+      <div className="hidden lg:flex h-24 items-center justify-center gap-3 border-b border-gray-800 px-4">
+        <Logo size={64} />
       </div>
 
       {/* Navigation */}

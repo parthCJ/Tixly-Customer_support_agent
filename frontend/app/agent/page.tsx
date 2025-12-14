@@ -67,7 +67,7 @@ export default function AgentDashboard() {
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+    <div className="px-4 sm:px-6 pb-4 sm:pb-6 pt-28 lg:pt-6 space-y-4 sm:space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">

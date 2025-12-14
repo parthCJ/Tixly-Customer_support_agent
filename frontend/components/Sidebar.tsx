@@ -20,9 +20,9 @@ export default function Sidebar() {
   return (
     <>
       {/* Mobile Header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 flex h-16 items-center justify-between bg-gray-900 px-4 border-b border-gray-800">
-        <div className="flex items-center gap-3">
-          <img src="/tixly-logo.svg" alt="Tixly" className="h-10" />
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 flex h-24 items-center justify-between bg-gray-900 px-4 border-b border-gray-800">
+        <div className="flex items-center gap-3 flex-1">
+          <img src="/tixly-logo.svg" alt="Tixly" className="h-20 w-auto max-w-[75%]" />
         </div>
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -47,7 +47,7 @@ export default function Sidebar() {
         transform transition-transform duration-300 ease-in-out
         lg:translate-x-0
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
-        lg:mt-0 mt-16
+        lg:mt-0 mt-24
       `}>
       {/* Logo - Hidden on mobile, shown on desktop */}
       <div className="hidden lg:flex h-24 items-center justify-center gap-3 border-b border-gray-800 px-4">

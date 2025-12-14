@@ -34,7 +34,7 @@ function SuccessContent() {
           {ticketId && (
             <div className="bg-gray-50 rounded-lg p-4 mb-6">
               <p className="text-sm text-gray-500 mb-1">Your Ticket ID</p>
-              <p className="text-lg font-mono font-semibold text-gray-900">{ticketId}</p>
+              <p className="text-lg font-mono font-semibold text-gray-900 tracking-tight">{ticketId}</p>
             </div>
           )}
 

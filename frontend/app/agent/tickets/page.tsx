@@ -111,7 +111,7 @@ export default function MyTicketsPage() {
         <div className="flex items-start justify-between mb-2 sm:mb-3">
           <div className="flex-1">
             <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2 flex-wrap">
-              <span className="text-[10px] sm:text-xs font-mono text-gray-500">{ticket.ticket_id}</span>
+              <span className="text-[10px] sm:text-xs font-mono text-gray-500 tracking-tight">{ticket.ticket_id}</span>
               <Badge variant={getPriorityColor((ticket.ai_classification?.priority || ticket.priority) as string)} size="sm">
                 {ticket.ai_classification?.priority || ticket.priority || 'medium'}
               </Badge>

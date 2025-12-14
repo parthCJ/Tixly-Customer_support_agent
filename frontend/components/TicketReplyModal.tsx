@@ -102,7 +102,7 @@ export function TicketReplyModal({ ticket, onClose }: TicketReplyModalProps) {
         <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
           <div className="flex-1 min-w-0 pr-4">
             <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2 flex-wrap">
-              <span className="text-[10px] sm:text-xs font-mono text-gray-500">{ticket.ticket_id}</span>
+              <span className="text-[10px] sm:text-xs font-mono text-gray-500 tracking-tight">{ticket.ticket_id}</span>
               <Badge variant={getPriorityColor(ticket.priority)} size="sm">
                 {ticket.priority || 'MEDIUM'}
               </Badge>

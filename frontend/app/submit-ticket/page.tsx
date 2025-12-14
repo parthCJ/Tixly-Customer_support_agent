@@ -7,6 +7,38 @@ import axios from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
+// Demo tickets for quick testing/showcasing
+const DEMO_TICKETS = [
+  {
+    customer_name: 'Sarah Johnson',
+    customer_email: 'sarah.johnson@email.com',
+    subject: 'Order hasn\'t shipped yet',
+    description: 'I ordered items 5 days ago (Order #10234) and tracking still shows \'processing\'. When will my order ship?',
+    order_id: '10234',
+  },
+  {
+    customer_name: 'Mike Chen',
+    customer_email: 'mike.chen@example.com',
+    subject: 'Double charged for subscription',
+    description: 'I was charged $29.99 twice this month for my premium subscription. Please refund the duplicate charge.',
+    order_id: '',
+  },
+  {
+    customer_name: 'Emma Davis',
+    customer_email: 'emma.davis@mail.com',
+    subject: 'Product arrived damaged',
+    description: 'My order #10567 arrived today but the box was crushed and the item inside is broken. I need a replacement ASAP.',
+    order_id: '10567',
+  },
+  {
+    customer_name: 'John Williams',
+    customer_email: 'john.williams@company.com',
+    subject: 'Cannot log into my account',
+    description: 'I\'ve been trying to reset my password but I\'m not receiving the reset email. I\'ve checked spam folder. Please help!',
+    order_id: '',
+  },
+];
+
 export default function SubmitTicketPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -86,6 +118,51 @@ export default function SubmitTicketPage() {
     });
   };
 
+  const loadDemoTicket = (index: number) => {
+    setFormData(DEMO_TICKETS[index]);
+    toast.info('Demo ticket loaded! Click Submit Ticket to send it.', { autoClose: 2000 });
+  };
+
+  const submitDemoTicket = async (index: number) => {
+    setLoading(true);
+    const demoData = DEMO_TICKETS[index];
+
+    try {
+      const ticketData = {
+        customer_name: demoData.customer_name,
+        customer_email: demoData.customer_email,
+        subject: demoData.subject,
+        description: demoData.description,
+        source: 'web',
+        ...(demoData.order_id && { order_id: demoData.order_id })
+      };
+      
+      const response = await axios.post(
+        `${API_URL}/api/tickets/create/`, 
+        ticketData,
+        {
+          timeout: 60000,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      toast.success('Demo ticket submitted successfully!');
+      const ticketId = response.data.ticket.ticket_id;
+      router.push(`/submit-ticket/success?ticket_id=${ticketId}`);
+    } catch (error: any) {
+      console.error('Error submitting demo ticket:', error);
+      if (error.code === 'ECONNABORTED') {
+        toast.error('Request timeout - backend may be waking up. Please try again in 30 seconds.');
+      } else {
+        toast.error(error.response?.data?.detail || 'Failed to submit ticket. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
@@ -97,6 +174,62 @@ export default function SubmitTicketPage() {
           <p className="text-base sm:text-lg text-gray-600 px-4">
             Submit your support ticket and get instant AI-powered assistance
           </p>
+        </div>
+
+        {/* Demo Tickets Quick Submit */}
+        <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 sm:p-6 border border-amber-200 mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm sm:text-base font-semibold text-gray-800">
+              Quick Demo Tickets
+            </h2>
+            <span className="text-xs text-gray-600 bg-white px-2 py-1 rounded">For Testing</span>
+          </div>
+          <p className="text-xs sm:text-sm text-gray-600 mb-4">
+            Click any button to instantly submit a demo ticket (great for showcasing!)
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+            <button
+              onClick={() => submitDemoTicket(0)}
+              disabled={loading}
+              className="text-left p-3 bg-white hover:bg-gray-50 rounded-lg border border-gray-200 transition disabled:opacity-50"
+            >
+              <div className="text-xs font-medium text-gray-900">🚚 Shipping Delay</div>
+              <div className="text-[10px] sm:text-xs text-gray-500 mt-1">Order tracking stuck</div>
+            </button>
+            <button
+              onClick={() => submitDemoTicket(1)}
+              disabled={loading}
+              className="text-left p-3 bg-white hover:bg-gray-50 rounded-lg border border-gray-200 transition disabled:opacity-50"
+            >
+              <div className="text-xs font-medium text-gray-900">💳 Billing Issue</div>
+              <div className="text-[10px] sm:text-xs text-gray-500 mt-1">Double charged</div>
+            </button>
+            <button
+              onClick={() => submitDemoTicket(2)}
+              disabled={loading}
+              className="text-left p-3 bg-white hover:bg-gray-50 rounded-lg border border-gray-200 transition disabled:opacity-50"
+            >
+              <div className="text-xs font-medium text-gray-900">📦 Damaged Product</div>
+              <div className="text-[10px] sm:text-xs text-gray-500 mt-1">Need replacement</div>
+            </button>
+            <button
+              onClick={() => submitDemoTicket(3)}
+              disabled={loading}
+              className="text-left p-3 bg-white hover:bg-gray-50 rounded-lg border border-gray-200 transition disabled:opacity-50"
+            >
+              <div className="text-xs font-medium text-gray-900">🔐 Login Problem</div>
+              <div className="text-[10px] sm:text-xs text-gray-500 mt-1">Password reset issue</div>
+            </button>
+          </div>
+          <div className="mt-3 text-center">
+            <button
+              onClick={() => loadDemoTicket(0)}
+              disabled={loading}
+              className="text-xs text-blue-600 hover:text-blue-700 underline disabled:opacity-50"
+            >
+              Or load demo data into form below
+            </button>
+          </div>
         </div>
 
         {/* Form Card */}
@@ -181,7 +314,7 @@ export default function SubmitTicketPage() {
                 name="order_id"
                 value={formData.order_id}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-gray-900"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-gray-900 font-mono"
                 placeholder="e.g., ORD-12345"
               />
             </div>

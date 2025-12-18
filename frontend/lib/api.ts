@@ -14,7 +14,7 @@ import type {
 // Remove trailing slash from API URL to prevent double slashes
 let API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000').replace(/\/$/, '');
 
-// Force HTTPS for production deployments (prevent mixed content errors)
+// Force HTTPS for production deployments, because hf dont work correctly on HTTP
 if (API_BASE_URL.includes('.hf.space') && API_BASE_URL.startsWith('http://')) {
   API_BASE_URL = API_BASE_URL.replace('http://', 'https://');
   console.warn('⚠️  Forcing HTTPS for HF Space URL');
@@ -27,7 +27,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 120000, // 2 minute timeout to handle lazy loading on first request
+  timeout: 120000, // 2 minute timeout to handle lazy loading on first request because the backed is cold starting and take time to load.
 });
 
 // Add request interceptor for debugging

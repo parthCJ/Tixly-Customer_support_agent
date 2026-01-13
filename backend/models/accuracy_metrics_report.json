@@ -1,0 +1,32 @@
+{
+  "timestamp": "2026-01-12T21:00:16.175524",
+  "model_path": "./backend/models/lstm_forecast.h5",
+  "test_samples": 841,
+  "metrics": {
+    "mae": 0.6191837128149911,
+    "mse": 0.8977494508449425,
+    "rmse": 0.9474964120485853,
+    "mape": 55799022072.28891,
+    "r2_score": 0.8584218241417693,
+    "max_error": 6.603213667869568,
+    "median_absolute_error": 0.37017759680747986
+  },
+  "error_statistics": {
+    "mean_error": 0.0372977143731611,
+    "std_error": 0.9467620246648472,
+    "min_error": -4.853170394897461,
+    "max_error": 6.603213667869568
+  },
+  "performance_by_volume": [
+    {
+      "Category": "0-10",
+      "MAE": 0.6079512257328761,
+      "Count": 839
+    },
+    {
+      "Category": "10-20",
+      "MAE": 5.331212043762207,
+      "Count": 2
+    }
+  ]
+}

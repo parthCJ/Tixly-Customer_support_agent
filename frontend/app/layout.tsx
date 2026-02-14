@@ -1,18 +1,7 @@
 import type { Metadata } from 'next';
-import { Space_Grotesk, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import 'react-toastify/dist/ReactToastify.css';
 import Providers from './providers';
-
-const spaceGrotesk = Space_Grotesk({ 
-  subsets: ['latin'],
-  variable: '--font-space-grotesk',
-});
-
-const jetbrainsMono = JetBrains_Mono({ 
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
-});
 
 export const metadata: Metadata = {
   title: 'Customer Support Copilot - AI-Powered Support Platform',
@@ -30,7 +19,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} font-sans`}>
+      <body className="font-sans">
         <Providers>
           {children}
         </Providers>

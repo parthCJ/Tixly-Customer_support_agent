@@ -208,7 +208,7 @@ export const forecastingApi = {
   // Get hourly forecast
   getHourly: async (hours: number = 24): Promise<HourlyForecast[]> => {
     const response = await api.get(`/api/forecast/hourly/${hours}/`);
-    return response.data.forecast;
+    return response.data.predictions;
   },
 
   // Get daily forecast
@@ -218,14 +218,14 @@ export const forecastingApi = {
   },
 
   // Get current staffing recommendation
-  getStaffing: async (): Promise<StaffingRecommendation & { current_hour: string }> => {
+  getStaffing: async (): Promise<StaffingRecommendation> => {
     const response = await api.get('/api/forecast/staffing/current/');
-    return response.data;
+    return response.data.staffing;
   },
 
   // Get model info
   getModelInfo: async (): Promise<{
-    model_loaded: boolean;
+    status: string;
     model_path: string;
     sequence_length: number;
     features: string[];

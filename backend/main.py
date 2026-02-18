@@ -19,6 +19,7 @@ app = FastAPI(
 # Global services (wired after background init)
 ai_service = None
 kb_service = None
+crewai_service = None
 services_ready = False
 
 # ------------------------- CORS CONFIG ------------------------------------
@@ -81,7 +82,7 @@ async def _initialize_services_async():
 
 
 def _init_services_blocking():
-    global ai_service, kb_service, services_ready
+    global ai_service, kb_service, crewai_service, services_ready
     try:
         print("� Background initialization started...")
         from .services.ai_service import TicketAIService
@@ -109,6 +110,20 @@ def _init_services_blocking():
             print(f"⚠️  KB Service initialization failed: {e}")
             kb_service = None
 
+        # CrewAI Service (Multi-Agent System)
+        try:
+            from .services.crewai_service import CustomerSupportCrew
+            crewai_service = CustomerSupportCrew(kb_service=kb_service)
+            print("✅ CrewAI Multi-Agent Service initialized")
+            use_crewai = os.getenv("USE_CREWAI", "false").lower() == "true"
+            if use_crewai:
+                print("🤖 CrewAI is ENABLED for ticket processing")
+            else:
+                print("ℹ️  CrewAI is available but not enabled (set USE_CREWAI=true to enable)")
+        except Exception as e:
+            print(f"⚠️  CrewAI Service initialization failed: {e}")
+            crewai_service = None
+
         # Forecasting Service
         try:
             forecasting_service = get_forecasting_service()
@@ -122,6 +137,7 @@ def _init_services_blocking():
         # Wire services for ticket processing
         tickets.ai_service = ai_service
         tickets.kb_service = kb_service
+        tickets.crewai_service = crewai_service
 
         # Sample agents
         sample_agents = [

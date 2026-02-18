@@ -5,6 +5,7 @@ Handles incoming ticket creation requests from various sources
 from fastapi import APIRouter, HTTPException, BackgroundTasks, Query, Depends
 from datetime import datetime
 import uuid
+import os
 from typing import Optional
 from pydantic import BaseModel
 
@@ -29,6 +30,7 @@ tickets_db = {}
 # Global service instances (set by main.py on startup)
 ai_service = None
 kb_service = None
+crewai_service = None
 
 
 # Request models
@@ -56,15 +58,103 @@ async def process_ticket_with_ai(ticket: Ticket):
     - Assign priority based on content
     - Extract key information
     - Generate suggested reply
+    
+    Uses either CrewAI (multi-agent) or standard AI service based on USE_CREWAI env var
     """
     try:
         print(f"🤖 Processing ticket {ticket.ticket_id} with AI...")
         
-        # Check if AI service is available
-        if not ai_service:
-            print("⚠️  AI service not available, skipping AI processing")
-            return
+        # Check if CrewAI multi-agent system is enabled
+        use_crewai = os.getenv("USE_CREWAI", "false").lower() == "true"
         
+        if use_crewai and crewai_service:
+            print(f"   🤖 Using CrewAI Multi-Agent System...")
+            await process_ticket_with_crewai(ticket)
+        elif ai_service:
+            print(f"   🤖 Using Standard AI Service...")
+            await process_ticket_with_standard_ai(ticket)
+        else:
+            print("⚠️  No AI service available, skipping AI processing")
+            return
+            
+    except Exception as e:
+        print(f"❌ Error in AI processing: {str(e)}")
+        import traceback
+        traceback.print_exc()
+
+
+async def process_ticket_with_crewai(ticket: Ticket):
+    """Process ticket using CrewAI multi-agent system"""
+    try:
+        # Prepare metadata for CrewAI
+        metadata = {
+            "order_id": ticket.order_id,
+            "customer_name": ticket.customer_name,
+            "source": ticket.source
+        }
+        
+        # Process with CrewAI multi-agent crew
+        result = crewai_service.process_ticket(
+            subject=ticket.subject,
+            description=ticket.description,
+            metadata=metadata
+        )
+        
+        # Update ticket with CrewAI results
+        ticket.ai_suggested_category = result["category"]
+        ticket.ai_suggested_priority = result["priority"]
+        ticket.ai_confidence = result["confidence"]
+        ticket.sentiment = result["sentiment"]
+        ticket.urgency_keywords = result["urgency_keywords"]
+        ticket.extracted_metadata = result["extracted_info"]
+        
+        # Store complete AI analysis
+        ticket.ai_analysis = {
+            "category": result["category"],
+            "priority": result["priority"],
+            "confidence": result["confidence"],
+            "sentiment": result["sentiment"],
+            "urgency_keywords": result["urgency_keywords"],
+            "extracted_info": result["extracted_info"],
+            "reasoning": result.get("reasoning", ""),
+            "quality_score": result.get("quality_score", 0),
+            "kb_articles": result.get("kb_articles", []),
+            "processing_method": "crewai_multiagent"
+        }
+        
+        print(f"   📊 CrewAI Analysis: {result['category']} | {result['priority']} | Confidence: {result['confidence']:.2f}")
+        
+        # Auto-assign category and priority if confidence is high
+        category_changed = False
+        if result["confidence"] > 0.7:
+            old_category = ticket.category
+            ticket.category = TicketCategory(result["category"])
+            ticket.priority = TicketPriority(result["priority"])
+            print(f"   ✅ Auto-classified: {ticket.category.value} | {ticket.priority.value}")
+            
+            # Check if category changed and reassign if needed
+            if old_category != ticket.category and ticket.assigned_to:
+                category_changed = True
+                print(f"   🔄 Category changed, checking reassignment...")
+        
+        # Use CrewAI generated reply
+        if result.get("suggested_reply"):
+            ticket.suggested_reply = result["suggested_reply"]
+            print(f"   💬 AI Reply generated (quality: {result.get('quality_score', 0):.2f})")
+        
+        # Reassign if category changed
+        if category_changed:
+            await reassign_ticket_to_best_agent(ticket)
+            
+    except Exception as e:
+        print(f"❌ Error in CrewAI processing: {str(e)}")
+        import traceback
+        traceback.print_exc()
+
+
+async def process_ticket_with_standard_ai(ticket: Ticket):
+    """Process ticket using standard AI service"""
+    try:
         # Prepare metadata for AI
         metadata = {
             "order_id": ticket.order_id,
@@ -95,7 +185,8 @@ async def process_ticket_with_ai(ticket: Ticket):
             "sentiment": classification["sentiment"],
             "urgency_keywords": classification["urgency_keywords"],
             "extracted_info": classification["extracted_info"],
-            "reasoning": classification.get("reasoning", "")
+            "reasoning": classification.get("reasoning", ""),
+            "processing_method": "standard_ai"
         }
         
         print(f"   📊 AI Analysis stored: {ticket.ai_analysis}")

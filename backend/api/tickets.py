@@ -2,6 +2,7 @@
 Ticket Creation API Endpoint
 Handles incoming ticket creation requests from various sources
 """
+
 from fastapi import APIRouter, HTTPException, BackgroundTasks, Query, Depends
 from datetime import datetime
 import uuid
@@ -15,7 +16,7 @@ from ..models.ticket import (
     TicketResponse,
     TicketStatus,
     TicketPriority,
-    TicketCategory
+    TicketCategory,
 )
 from ..models.user import User, UserRole
 
@@ -58,15 +59,15 @@ async def process_ticket_with_ai(ticket: Ticket):
     - Assign priority based on content
     - Extract key information
     - Generate suggested reply
-    
+
     Uses either CrewAI (multi-agent) or standard AI service based on USE_CREWAI env var
     """
     try:
         print(f"🤖 Processing ticket {ticket.ticket_id} with AI...")
-        
+
         # Check if CrewAI multi-agent system is enabled
         use_crewai = os.getenv("USE_CREWAI", "false").lower() == "true"
-        
+
         if use_crewai and crewai_service:
             print(f"   🤖 Using CrewAI Multi-Agent System...")
             await process_ticket_with_crewai(ticket)
@@ -76,10 +77,11 @@ async def process_ticket_with_ai(ticket: Ticket):
         else:
             print("⚠️  No AI service available, skipping AI processing")
             return
-            
+
     except Exception as e:
         print(f"❌ Error in AI processing: {str(e)}")
         import traceback
+
         traceback.print_exc()
 
 
@@ -90,16 +92,14 @@ async def process_ticket_with_crewai(ticket: Ticket):
         metadata = {
             "order_id": ticket.order_id,
             "customer_name": ticket.customer_name,
-            "source": ticket.source
+            "source": ticket.source,
         }
-        
+
         # Process with CrewAI multi-agent crew
         result = crewai_service.process_ticket(
-            subject=ticket.subject,
-            description=ticket.description,
-            metadata=metadata
+            subject=ticket.subject, description=ticket.description, metadata=metadata
         )
-        
+
         # Update ticket with CrewAI results
         ticket.ai_suggested_category = result["category"]
         ticket.ai_suggested_priority = result["priority"]
@@ -107,7 +107,7 @@ async def process_ticket_with_crewai(ticket: Ticket):
         ticket.sentiment = result["sentiment"]
         ticket.urgency_keywords = result["urgency_keywords"]
         ticket.extracted_metadata = result["extracted_info"]
-        
+
         # Store complete AI analysis
         ticket.ai_analysis = {
             "category": result["category"],
@@ -119,36 +119,68 @@ async def process_ticket_with_crewai(ticket: Ticket):
             "reasoning": result.get("reasoning", ""),
             "quality_score": result.get("quality_score", 0),
             "kb_articles": result.get("kb_articles", []),
-            "processing_method": "crewai_multiagent"
+            "processing_method": "crewai_multiagent",
         }
-        
-        print(f"   📊 CrewAI Analysis: {result['category']} | {result['priority']} | Confidence: {result['confidence']:.2f}")
-        
+
+        print(
+            f"   📊 CrewAI Analysis: {result['category']} | {result['priority']} | Confidence: {result['confidence']:.2f}"
+        )
+
         # Auto-assign category and priority if confidence is high
         category_changed = False
         if result["confidence"] > 0.7:
             old_category = ticket.category
             ticket.category = TicketCategory(result["category"])
             ticket.priority = TicketPriority(result["priority"])
-            print(f"   ✅ Auto-classified: {ticket.category.value} | {ticket.priority.value}")
-            
+            print(
+                f"   ✅ Auto-classified: {ticket.category.value} | {ticket.priority.value}"
+            )
+
             # Check if category changed and reassign if needed
             if old_category != ticket.category and ticket.assigned_to:
                 category_changed = True
                 print(f"   🔄 Category changed, checking reassignment...")
-        
+
         # Use CrewAI generated reply
         if result.get("suggested_reply"):
-            ticket.suggested_reply = result["suggested_reply"]
-            print(f"   💬 AI Reply generated (quality: {result.get('quality_score', 0):.2f})")
-        
+            ticket.ai_suggested_reply = result["suggested_reply"]
+            print(
+                f"   💬 AI Reply generated (quality: {result.get('quality_score', 0):.2f})"
+            )
+
         # Reassign if category changed
         if category_changed:
-            await reassign_ticket_to_best_agent(ticket)
-            
+            try:
+                current_agent_id = ticket.assigned_to
+                best_agent = agents_api.find_best_agent_for_ticket(
+                    category=ticket.category,
+                    priority=ticket.priority.value if ticket.priority else "medium",
+                )
+
+                # Only reassign if we found a better agent with matching skills
+                if best_agent and best_agent.agent_id != current_agent_id:
+                    # Check if new agent has the skill for this category
+                    if ticket.category.value in best_agent.skills:
+                        # Unassign from current agent
+                        agents_api.unassign_ticket_from_agent(
+                            current_agent_id, ticket.ticket_id
+                        )
+                        # Assign to new agent
+                        agents_api.assign_ticket_to_agent(
+                            best_agent.agent_id, ticket.ticket_id
+                        )
+                        ticket.assigned_to = best_agent.agent_id
+                        ticket.team = best_agent.team
+                        print(
+                            f"   🔄 Reassigned from {current_agent_id} to {best_agent.name} (has {ticket.category.value} skill)"
+                        )
+            except Exception as e:
+                print(f"   ⚠️  Could not reassign ticket: {e}")
+
     except Exception as e:
         print(f"❌ Error in CrewAI processing: {str(e)}")
         import traceback
+
         traceback.print_exc()
 
 
@@ -159,16 +191,14 @@ async def process_ticket_with_standard_ai(ticket: Ticket):
         metadata = {
             "order_id": ticket.order_id,
             "customer_name": ticket.customer_name,
-            "source": ticket.source
+            "source": ticket.source,
         }
-        
+
         # Classify the ticket using the pre-initialized service
         classification = ai_service.classify_ticket(
-            subject=ticket.subject,
-            description=ticket.description,
-            metadata=metadata
+            subject=ticket.subject, description=ticket.description, metadata=metadata
         )
-        
+
         # Update ticket with AI results
         ticket.ai_suggested_category = classification["category"]
         ticket.ai_suggested_priority = classification["priority"]
@@ -176,7 +206,7 @@ async def process_ticket_with_standard_ai(ticket: Ticket):
         ticket.sentiment = classification["sentiment"]
         ticket.urgency_keywords = classification["urgency_keywords"]
         ticket.extracted_metadata = classification["extracted_info"]
-        
+
         # Store complete AI analysis as a dictionary (this will be serialized in the response)
         ticket.ai_analysis = {
             "category": classification["category"],
@@ -186,34 +216,40 @@ async def process_ticket_with_standard_ai(ticket: Ticket):
             "urgency_keywords": classification["urgency_keywords"],
             "extracted_info": classification["extracted_info"],
             "reasoning": classification.get("reasoning", ""),
-            "processing_method": "standard_ai"
+            "processing_method": "standard_ai",
         }
-        
+
         print(f"   📊 AI Analysis stored: {ticket.ai_analysis}")
-        
+
         # Auto-assign category and priority if confidence is high
         category_changed = False
         if classification["confidence"] > 0.7:
             old_category = ticket.category
             ticket.category = TicketCategory(classification["category"])
             ticket.priority = TicketPriority(classification["priority"])
-            print(f"   ✅ Auto-classified: {ticket.category.value} | {ticket.priority.value}")
-            
+            print(
+                f"   ✅ Auto-classified: {ticket.category.value} | {ticket.priority.value}"
+            )
+
             # Check if category changed significantly and reassign if needed
             if old_category != ticket.category and ticket.assigned_to:
                 category_changed = True
-                print(f"   🔄 Category changed from {old_category} to {ticket.category}, checking reassignment...")
+                print(
+                    f"   🔄 Category changed from {old_category} to {ticket.category}, checking reassignment..."
+                )
         else:
-            print(f"   ⚠️  Low confidence ({classification['confidence']:.2f}), keeping defaults")
-        
+            print(
+                f"   ⚠️  Low confidence ({classification['confidence']:.2f}), keeping defaults"
+            )
+
         # Generate suggested reply using the pre-initialized service
         ticket_data = {
             "subject": ticket.subject,
             "description": ticket.description,
             "category": ticket.category.value if ticket.category else "GENERAL",
-            "priority": ticket.priority.value
+            "priority": ticket.priority.value,
         }
-        
+
         # Search KB for context if kb_service is available
         kb_context = None
         if kb_service:
@@ -221,48 +257,56 @@ async def process_ticket_with_standard_ai(ticket: Ticket):
                 kb_articles = kb_service.search(
                     query=ticket.description,
                     n_results=2,
-                    category_filter=ticket.category.value if ticket.category else None
+                    category_filter=ticket.category.value if ticket.category else None,
                 )
                 if kb_articles:
-                    kb_context = "\n\n".join([
-                        f"KB Article: {article['title']}\n{article['content'][:500]}..."
-                        for article in kb_articles[:2]
-                    ])
+                    kb_context = "\n\n".join(
+                        [
+                            f"KB Article: {article['title']}\n{article['content'][:500]}..."
+                            for article in kb_articles[:2]
+                        ]
+                    )
             except Exception as e:
                 print(f"   ⚠️  KB search failed: {e}")
-        
+
         suggested_reply = ai_service.generate_suggested_reply(ticket_data, kb_context)
         ticket.ai_suggested_reply = suggested_reply
-        
+
         # Reassign to better agent if category changed after AI classification
         if category_changed:
             try:
                 current_agent_id = ticket.assigned_to
                 best_agent = agents_api.find_best_agent_for_ticket(
                     category=ticket.category,
-                    priority=ticket.priority.value if ticket.priority else "medium"
+                    priority=ticket.priority.value if ticket.priority else "medium",
                 )
-                
+
                 # Only reassign if we found a better agent with matching skills
                 if best_agent and best_agent.agent_id != current_agent_id:
                     # Check if new agent has the skill for this category
                     if ticket.category.value in best_agent.skills:
                         # Unassign from current agent
-                        agents_api.unassign_ticket_from_agent(current_agent_id, ticket.ticket_id)
+                        agents_api.unassign_ticket_from_agent(
+                            current_agent_id, ticket.ticket_id
+                        )
                         # Assign to new agent
-                        agents_api.assign_ticket_to_agent(best_agent.agent_id, ticket.ticket_id)
+                        agents_api.assign_ticket_to_agent(
+                            best_agent.agent_id, ticket.ticket_id
+                        )
                         ticket.assigned_to = best_agent.agent_id
                         ticket.team = best_agent.team
-                        print(f"   🔄 Reassigned from {current_agent_id} to {best_agent.name} (has {ticket.category.value} skill)")
+                        print(
+                            f"   🔄 Reassigned from {current_agent_id} to {best_agent.name} (has {ticket.category.value} skill)"
+                        )
             except Exception as e:
                 print(f"   ⚠️  Could not reassign ticket: {e}")
-        
+
         # Update the ticket in storage
         tickets_db[ticket.ticket_id] = ticket
-        
+
         print(f"   ✨ AI processing complete!")
         print(f"   Reasoning: {classification['reasoning']}")
-        
+
     except Exception as e:
         print(f"   ❌ AI processing error: {str(e)}")
         # Don't fail the ticket creation, just log the error
@@ -270,32 +314,31 @@ async def process_ticket_with_standard_ai(ticket: Ticket):
 
 @router.post("/create/", response_model=TicketResponse)
 async def create_ticket(
-    request: TicketCreateRequest,
-    background_tasks: BackgroundTasks
+    request: TicketCreateRequest, background_tasks: BackgroundTasks
 ):
     """
     Create a new support ticket
-    
+
     This endpoint receives ticket data from various sources:
     - Web forms (public or authenticated)
     - Email (via webhook)
     - Chat systems
     - Support platforms (Zendesk, Intercom, etc.)
-    
+
     Flow:
     1. Validate incoming data
     2. Generate unique ticket ID
     3. Create ticket record
     4. Queue for AI processing (background)
     5. Return ticket info immediately
-    
+
     Note: Authentication is optional to support webhooks and public forms
     """
     try:
         # Generate IDs
         ticket_id = generate_ticket_id()
         customer_id = generate_customer_id(request.customer_email)
-        
+
         # Create ticket object
         ticket = Ticket(
             ticket_id=ticket_id,
@@ -309,23 +352,23 @@ async def create_ticket(
             status=TicketStatus.NEW,
             priority=TicketPriority.MEDIUM,  # Default, will be updated by AI
             created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()
+            updated_at=datetime.utcnow(),
         )
-        
+
         # Store ticket
         tickets_db[ticket_id] = ticket
-        
+
         # Queue AI processing in background (will update category/priority)
         background_tasks.add_task(process_ticket_with_ai, ticket)
-        
+
         # Try to auto-assign to best available agent after AI processing completes
         # For now, assign immediately based on default category
         try:
             best_agent = agents_api.find_best_agent_for_ticket(
                 category=ticket.category,
-                priority=ticket.priority.value if ticket.priority else "medium"
+                priority=ticket.priority.value if ticket.priority else "medium",
             )
-            
+
             if best_agent:
                 ticket.assigned_to = best_agent.agent_id
                 ticket.team = best_agent.team
@@ -339,7 +382,7 @@ async def create_ticket(
         except Exception as e:
             assignment_message = "Pending agent assignment"
             print(f"⚠️  Could not auto-assign ticket {ticket_id}: {e}")
-        
+
         # Return immediate response
         return TicketResponse(
             ticket=ticket,
@@ -347,14 +390,13 @@ async def create_ticket(
                 "Ticket created successfully",
                 assignment_message,
                 "AI classification in progress",
-                "Agent will be notified"
-            ]
+                "Agent will be notified",
+            ],
         )
-        
+
     except Exception as e:
         raise HTTPException(
-            status_code=500,
-            detail=f"Failed to create ticket: {str(e)}"
+            status_code=500, detail=f"Failed to create ticket: {str(e)}"
         )
 
 
@@ -364,11 +406,8 @@ async def get_ticket(ticket_id: str):
     Retrieve a ticket by ID
     """
     if ticket_id not in tickets_db:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Ticket {ticket_id} not found"
-        )
-    
+        raise HTTPException(status_code=404, detail=f"Ticket {ticket_id} not found")
+
     return tickets_db[ticket_id]
 
 
@@ -376,24 +415,24 @@ async def get_ticket(ticket_id: str):
 async def list_tickets(
     status: Optional[TicketStatus] = None,
     priority: Optional[TicketPriority] = None,
-    limit: int = 50
+    limit: int = 50,
 ):
     """
     List tickets with optional filtering
     """
     tickets = list(tickets_db.values())
-    
+
     # Filter by status
     if status:
         tickets = [t for t in tickets if t.status == status]
-    
+
     # Filter by priority
     if priority:
         tickets = [t for t in tickets if t.priority == priority]
-    
+
     # Sort by creation date (newest first)
     tickets.sort(key=lambda t: t.created_at, reverse=True)
-    
+
     # Limit results
     return tickets[:limit]
 
@@ -402,7 +441,7 @@ async def list_tickets(
 async def zendesk_webhook(payload: dict, background_tasks: BackgroundTasks):
     """
     Webhook endpoint for Zendesk integration
-    
+
     Example Zendesk webhook payload:
     {
         "ticket": {
@@ -419,23 +458,22 @@ async def zendesk_webhook(payload: dict, background_tasks: BackgroundTasks):
     try:
         zendesk_ticket = payload.get("ticket", {})
         requester = zendesk_ticket.get("requester", {})
-        
+
         # Convert Zendesk format to our format
         request = TicketCreateRequest(
             customer_email=requester.get("email"),
             customer_name=requester.get("name"),
             subject=zendesk_ticket.get("subject"),
             description=zendesk_ticket.get("description"),
-            source="zendesk"
+            source="zendesk",
         )
-        
+
         # Create ticket using our standard flow
         return await create_ticket(request, background_tasks)
-        
+
     except Exception as e:
         raise HTTPException(
-            status_code=400,
-            detail=f"Invalid Zendesk webhook payload: {str(e)}"
+            status_code=400, detail=f"Invalid Zendesk webhook payload: {str(e)}"
         )
 
 
@@ -443,7 +481,7 @@ async def zendesk_webhook(payload: dict, background_tasks: BackgroundTasks):
 async def intercom_webhook(payload: dict, background_tasks: BackgroundTasks):
     """
     Webhook endpoint for Intercom integration
-    
+
     Example Intercom webhook payload:
     {
         "type": "conversation.created",
@@ -465,108 +503,106 @@ async def intercom_webhook(payload: dict, background_tasks: BackgroundTasks):
         data = payload.get("data", {}).get("item", {})
         user = data.get("user", {})
         message = data.get("conversation_message", {})
-        
+
         # Convert Intercom format to our format
         request = TicketCreateRequest(
             customer_email=user.get("email"),
             customer_name=user.get("name"),
             subject="Support Request",  # Intercom doesn't have subjects
             description=message.get("body"),
-            source="intercom"
+            source="intercom",
         )
-        
+
         # Create ticket using our standard flow
         return await create_ticket(request, background_tasks)
-        
+
     except Exception as e:
         raise HTTPException(
-            status_code=400,
-            detail=f"Invalid Intercom webhook payload: {str(e)}"
+            status_code=400, detail=f"Invalid Intercom webhook payload: {str(e)}"
         )
 
 
 @router.put("/{ticket_id}/status/")
 async def update_ticket_status(
     ticket_id: str,
-    status: TicketStatus = Query(..., description="New status for the ticket")
+    status: TicketStatus = Query(..., description="New status for the ticket"),
 ):
     """
     Update ticket status
-    
+
     When resolving/closing tickets, automatically decrements agent's current load
     """
     if ticket_id not in tickets_db:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Ticket {ticket_id} not found"
-        )
-    
+        raise HTTPException(status_code=404, detail=f"Ticket {ticket_id} not found")
+
     ticket = tickets_db[ticket_id]
     old_status = ticket.status
     ticket.status = status
     ticket.updated_at = datetime.utcnow()
-    
+
     # If ticket is being resolved/closed, reduce agent's load
-    if status in [TicketStatus.RESOLVED, TicketStatus.CLOSED] and old_status not in [TicketStatus.RESOLVED, TicketStatus.CLOSED]:
+    if status in [TicketStatus.RESOLVED, TicketStatus.CLOSED] and old_status not in [
+        TicketStatus.RESOLVED,
+        TicketStatus.CLOSED,
+    ]:
         if ticket.assigned_to:
             agents_api.unassign_ticket_from_agent(ticket.assigned_to, ticket_id)
-    
+
     if status == TicketStatus.RESOLVED:
         ticket.resolved_at = datetime.utcnow()
-    
+
     return ticket
 
 
 @router.put("/{ticket_id}/assign/")
 async def assign_ticket(
-    ticket_id: str, 
+    ticket_id: str,
     agent_id: Optional[str] = Query(None, description="Specific agent ID to assign to"),
-    auto_assign: bool = Query(False, description="Automatically find best available agent"),
-    team: Optional[str] = None
+    auto_assign: bool = Query(
+        False, description="Automatically find best available agent"
+    ),
+    team: Optional[str] = None,
 ):
     """
     Assign ticket to an agent
-    
+
     Two modes:
     1. Manual assignment: Provide agent_id
     2. Auto-assignment: Set auto_assign=true, system finds best agent
-    
+
     Auto-assignment logic:
     - Matches agent skills to ticket category
     - Considers agent availability and current load
     - Assigns to least busy qualified agent
     """
     if ticket_id not in tickets_db:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Ticket {ticket_id} not found"
-        )
-    
+        raise HTTPException(status_code=404, detail=f"Ticket {ticket_id} not found")
+
     ticket = tickets_db[ticket_id]
-    
+
     # Auto-assignment mode
     if auto_assign:
         best_agent = agents_api.find_best_agent_for_ticket(
             category=ticket.category,
-            priority=ticket.priority.value if ticket.priority else None
+            priority=ticket.priority.value if ticket.priority else None,
         )
-        
+
         if not best_agent:
             raise HTTPException(
                 status_code=404,
-                detail=f"No available agents found with skills for {ticket.category}"
+                detail=f"No available agents found with skills for {ticket.category}",
             )
-        
+
         agent_id = best_agent.agent_id
-        
+
         # Increment agent's load
         agents_api.assign_ticket_to_agent(agent_id, ticket_id)
-        
+
         ticket.assigned_to = agent_id
         ticket.team = best_agent.team
         ticket.status = TicketStatus.IN_PROGRESS
         ticket.updated_at = datetime.utcnow()
-        
+
         return {
             "ticket": ticket,
             "assignment": {
@@ -574,32 +610,28 @@ async def assign_ticket(
                 "agent_id": best_agent.agent_id,
                 "agent_name": best_agent.name,
                 "agent_load": best_agent.current_load,
-                "message": f"Auto-assigned to {best_agent.name} (load: {best_agent.current_load}/{best_agent.max_tickets_per_day})"
-            }
+                "message": f"Auto-assigned to {best_agent.name} (load: {best_agent.current_load}/{best_agent.max_tickets_per_day})",
+            },
         }
-    
+
     # Manual assignment mode
     if not agent_id:
         raise HTTPException(
-            status_code=400,
-            detail="Must provide agent_id or set auto_assign=true"
+            status_code=400, detail="Must provide agent_id or set auto_assign=true"
         )
-    
+
     # Check if agent exists and has capacity
     agent = agents_api.get_agent_by_id(agent_id)
     if not agent:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Agent {agent_id} not found"
-        )
-    
+        raise HTTPException(status_code=404, detail=f"Agent {agent_id} not found")
+
     # Unassign from previous agent if reassigning
     if ticket.assigned_to and ticket.assigned_to != agent_id:
         agents_api.unassign_ticket_from_agent(ticket.assigned_to, ticket_id)
-    
+
     # Assign to new agent
     agents_api.assign_ticket_to_agent(agent_id, ticket_id)
-    
+
     ticket.assigned_to = agent_id
     if team:
         ticket.team = team
@@ -607,7 +639,7 @@ async def assign_ticket(
         ticket.team = agent.team
     ticket.status = TicketStatus.IN_PROGRESS
     ticket.updated_at = datetime.utcnow()
-    
+
     return {
         "ticket": ticket,
         "assignment": {
@@ -615,8 +647,8 @@ async def assign_ticket(
             "agent_id": agent.agent_id,
             "agent_name": agent.name,
             "agent_load": agent.current_load,
-            "message": f"Assigned to {agent.name} (load: {agent.current_load}/{agent.max_tickets_per_day})"
-        }
+            "message": f"Assigned to {agent.name} (load: {agent.current_load}/{agent.max_tickets_per_day})",
+        },
     }
 
 
@@ -626,13 +658,10 @@ async def unassign_ticket(ticket_id: str):
     Remove agent assignment from a ticket
     """
     if ticket_id not in tickets_db:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Ticket {ticket_id} not found"
-        )
-    
+        raise HTTPException(status_code=404, detail=f"Ticket {ticket_id} not found")
+
     ticket = tickets_db[ticket_id]
-    
+
     # Decrement agent's load if assigned
     if ticket.assigned_to:
         agents_api.unassign_ticket_from_agent(ticket.assigned_to, ticket_id)
@@ -640,14 +669,7 @@ async def unassign_ticket(ticket_id: str):
         ticket.assigned_to = None
         ticket.status = TicketStatus.NEW
         ticket.updated_at = datetime.utcnow()
-        
-        return {
-            "ticket": ticket,
-            "message": f"Unassigned from {previous_agent}"
-        }
-    
-    return {
-        "ticket": ticket,
-        "message": "Ticket was not assigned"
-    }
 
+        return {"ticket": ticket, "message": f"Unassigned from {previous_agent}"}
+
+    return {"ticket": ticket, "message": "Ticket was not assigned"}

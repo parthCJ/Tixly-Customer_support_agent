@@ -2,12 +2,24 @@
 CrewAI Service - Multi-Agent Customer Support System
 Uses CrewAI to orchestrate specialized agents for ticket processing
 """
+
 import os
 from typing import Dict, Any, Optional
 from dotenv import load_dotenv
-from crewai import Agent, Task, Crew, Process
-from langchain_groq import ChatGroq
-from .crewai_tools import create_support_tools
+
+try:
+    from crewai import Agent, Task, Crew, Process
+    from langchain_openai import ChatOpenAI
+    from .crewai_tools import create_support_tools
+
+    CREWAI_AVAILABLE = True
+except Exception as e:
+    CREWAI_AVAILABLE = False
+    print(f"⚠️  CrewAI import failed: {e}")
+    Agent = None
+    Task = None
+    Crew = None
+    Process = None
 
 # Load environment variables
 load_dotenv()
@@ -15,44 +27,61 @@ load_dotenv()
 
 class CustomerSupportCrew:
     """Multi-agent crew for customer support ticket processing"""
-    
+
     def __init__(self, kb_service=None):
         """
         Initialize the customer support crew
-        
+
         Args:
             kb_service: Optional knowledge base service for RAG
         """
-        self.api_key = os.getenv("GROQ_API_KEY")
+        if not CREWAI_AVAILABLE:
+            print("⚠️  CrewAI not available - multi-agent system disabled")
+            self.llm = None
+            self.kb_service = None
+            self.tools = []
+            return
+
+        self.api_key = os.getenv("OPENROUTER_API_KEY")
         if not self.api_key:
-            print("⚠️  Warning: GROQ_API_KEY not found in environment variables")
+            print("⚠️  Warning: OPENROUTER_API_KEY not found in environment variables")
             print("   CrewAI agents will be disabled")
             self.llm = None
         else:
-            # Initialize Groq LLM for all agents
-            self.llm = ChatGroq(
+            # Initialize OpenRouter LLM for all agents via LiteLLM
+            os.environ["OPENROUTER_API_KEY"] = self.api_key
+            self.llm = ChatOpenAI(
                 api_key=self.api_key,
-                model="llama-3.3-70b-versatile",
+                base_url="https://openrouter.ai/api/v1",
+                model="openrouter/stepfun/step-3.5-flash:free",
                 temperature=0.1,
-                max_tokens=1000
+                max_tokens=800,
+                default_headers={
+                    "HTTP-Referer": "https://github.com/tixly-support",
+                    "X-Title": "Tixly Customer Support",
+                },
             )
-        
+
         self.kb_service = kb_service
-        
+
         # Create tools for agents
         self.tools = create_support_tools(kb_service=kb_service)
-        
+
         # Initialize agents
         self.triage_agent = self._create_triage_agent()
         self.knowledge_agent = self._create_knowledge_agent()
         self.response_agent = self._create_response_agent()
         self.quality_agent = self._create_quality_agent()
-    
+
     def _create_triage_agent(self) -> Agent:
         """Create the triage agent for ticket classification"""
         # Tools for triage: category validator, priority validator, urgency detector
-        triage_tools = [t for t in self.tools if 'validator' in t.name.lower() or 'urgency' in t.name.lower()]
-        
+        triage_tools = [
+            t
+            for t in self.tools
+            if "validator" in t.name.lower() or "urgency" in t.name.lower()
+        ]
+
         return Agent(
             role="Customer Support Triage Specialist",
             goal="Accurately classify and prioritize incoming customer support tickets",
@@ -64,10 +93,14 @@ class CustomerSupportCrew:
             verbose=True,
             allow_delegation=False,
             llm=self.llm,
-            tools=triage_tools
+            tools=triage_tools,
+        )
+
+    def _create_knowledge_agent(self) -> Agent:
+        """Create the knowledge base agent"""
         # Tools for KB agent: knowledge base search
-        kb_tools = [t for t in self.tools if 'knowledge' in t.name.lower()]
-        
+        kb_tools = [t for t in self.tools if "knowledge" in t.name.lower()]
+
         return Agent(
             role="Knowledge Base Expert",
             goal="Find the most relevant solutions and articles from the knowledge base",
@@ -78,13 +111,9 @@ class CustomerSupportCrew:
             verbose=True,
             allow_delegation=False,
             llm=self.llm,
-            tools=kb_tools if kb_tools else []cumentation that can help resolve customer issues. You can 
-            quickly identify which articles will be most helpful for specific problems.""",
-            verbose=True,
-            allow_delegation=False,
-            llm=self.llm
+            tools=kb_tools if kb_tools else [],
         )
-    
+
     def _create_response_agent(self) -> Agent:
         """Create the response generation agent"""
         return Agent(
@@ -96,9 +125,9 @@ class CustomerSupportCrew:
             tone. You always provide actionable solutions and next steps.""",
             verbose=True,
             allow_delegation=False,
-            llm=self.llm
+            llm=self.llm,
         )
-    
+
     def _create_quality_agent(self) -> Agent:
         """Create the quality assurance agent"""
         return Agent(
@@ -110,18 +139,20 @@ class CustomerSupportCrew:
             completeness, and adherence to company policies.""",
             verbose=True,
             allow_delegation=False,
-            llm=self.llm
+            llm=self.llm,
         )
-    
-    def process_ticket(self, subject: str, description: str, metadata: Dict[str, Any] = None) -> Dict[str, Any]:
+
+    def process_ticket(
+        self, subject: str, description: str, metadata: Dict[str, Any] = None
+    ) -> Dict[str, Any]:
         """
         Process a ticket through the multi-agent workflow
-        
+
         Args:
             subject: Ticket subject line
             description: Ticket description/body
             metadata: Additional context (order_id, customer info, etc.)
-        
+
         Returns:
             Dictionary with:
                 - category: Predicted category
@@ -137,7 +168,7 @@ class CustomerSupportCrew:
         """
         if not self.llm:
             return self._fallback_response()
-        
+
         try:
             # Prepare ticket context
             ticket_context = f"""
@@ -147,7 +178,7 @@ class CustomerSupportCrew:
             Additional Context:
             {self._format_metadata(metadata)}
             """
-            
+
             # Task 1: Triage and Classification
             triage_task = Task(
                 description=f"""
@@ -167,9 +198,9 @@ class CustomerSupportCrew:
                 Format your response as structured data.
                 """,
                 agent=self.triage_agent,
-                expected_output="Structured classification with category, priority, sentiment, and reasoning"
+                expected_output="Structured classification with category, priority, sentiment, and reasoning",
             )
-            
+
             # Task 2: Knowledge Base Search
             kb_task = Task(
                 description=f"""
@@ -187,9 +218,9 @@ class CustomerSupportCrew:
                 Provide a list of relevant article titles and brief summaries.
                 """,
                 agent=self.knowledge_agent,
-                expected_output="List of relevant knowledge base articles with summaries"
+                expected_output="List of relevant knowledge base articles with summaries",
             )
-            
+
             # Task 3: Response Generation
             response_task = Task(
                 description=f"""
@@ -209,9 +240,9 @@ class CustomerSupportCrew:
                 Keep the response concise but complete (150-300 words).
                 """,
                 agent=self.response_agent,
-                expected_output="A complete, professional customer response ready to send"
+                expected_output="A complete, professional customer response ready to send",
             )
-            
+
             # Task 4: Quality Review
             quality_task = Task(
                 description=f"""
@@ -233,64 +264,77 @@ class CustomerSupportCrew:
                 - Final approved response
                 """,
                 agent=self.quality_agent,
-                expected_output="Quality score and final approved response"
+                expected_output="Quality score and final approved response",
             )
-            
+
             # Create and run the crew
             crew = Crew(
                 agents=[
                     self.triage_agent,
                     self.knowledge_agent,
                     self.response_agent,
-                    self.quality_agent
+                    self.quality_agent,
                 ],
                 tasks=[triage_task, kb_task, response_task, quality_task],
                 process=Process.sequential,  # Tasks run in sequence
-                verbose=True
+                verbose=True,
             )
-            
+
             # Execute the crew workflow
-            result = crew.kickoff()
-            
-            # Parse and structure the results
-            return self._parse_crew_result(result, ticket_context)
-            
+            try:
+                result = crew.kickoff()
+                # Parse and structure the results
+                return self._parse_crew_result(result, ticket_context, crew.tasks)
+            except Exception as e:
+                # If crew fails (e.g., rate limit), try to salvage completed tasks
+                print(f"⚠️  Crew execution failed, extracting partial results: {str(e)}")
+                return self._parse_partial_crew_result(crew.tasks, ticket_context)
+
         except Exception as e:
             print(f"❌ Error in CrewAI processing: {str(e)}")
             import traceback
+
             traceback.print_exc()
             return self._fallback_response()
-    
+
     def _format_metadata(self, metadata: Optional[Dict[str, Any]]) -> str:
         """Format metadata for display"""
         if not metadata:
             return "No additional context provided"
-        
+
         formatted = []
         for key, value in metadata.items():
             if value:
                 formatted.append(f"- {key}: {value}")
-        
+
         return "\n".join(formatted) if formatted else "No additional context provided"
-    
-    def _parse_crew_result(self, result, ticket_context: str) -> Dict[str, Any]:
+
+    def _parse_crew_result(
+        self, result, ticket_context: str, tasks=None
+    ) -> Dict[str, Any]:
         """
         Parse the crew execution result into structured format
-        
+
         Note: CrewAI returns the final task output. We'll need to parse it.
         """
         try:
             # Get the final output
             final_output = str(result)
-            
+
             # Extract structured data from the output
             # This is a simplified parser - in production, you'd want more robust parsing
-            
+
             # Default structured response
             structured_result = {
-                "category": self._extract_value(final_output, "category", "GENERAL"),
-                "priority": self._extract_value(final_output, "priority", "MEDIUM"),
-                "sentiment": self._extract_value(final_output, "sentiment", "neutral"),
+                "category": self._normalize_category(
+                    self._extract_value(final_output, "category", "GENERAL")
+                ),
+                "priority": self._normalize_priority(
+                    self._extract_value(final_output, "priority", "MEDIUM")
+                ),
+                "sentiment": self._extract_value(
+                    final_output, "sentiment", "neutral"
+                ).lower(),
                 "urgency_keywords": self._extract_keywords(final_output),
                 "extracted_info": {},
                 "confidence": 0.85,
@@ -298,62 +342,99 @@ class CustomerSupportCrew:
                 "suggested_reply": self._extract_response(final_output),
                 "kb_articles": self._extract_kb_articles(final_output),
                 "quality_score": self._extract_quality_score(final_output),
-                "crew_output": final_output  # Keep full output for debugging
+                "crew_output": final_output,  # Keep full output for debugging
             }
-            
+
             return structured_result
-            
+
         except Exception as e:
             print(f"⚠️  Error parsing crew result: {str(e)}")
             return self._fallback_response()
-    
+
     def _extract_value(self, text: str, field: str, default: str) -> str:
-        """Extract a specific field value from text"""
-        # Simple extraction - look for patterns like "Category: BILLING"
+        """Extract a specific field value from text (handles JSON output)"""
         import re
-        pattern = rf"{field}[:\s]+([A-Z_]+)"
-        match = re.search(pattern, text, re.IGNORECASE)
-        return match.group(1).upper() if match else default
-    
+        import json
+
+        # Try JSON parsing first (most reliable)
+        try:
+            # Look for JSON object in text
+            json_match = re.search(r"\{[^}]+\}", text, re.DOTALL)
+            if json_match:
+                data = json.loads(json_match.group(0))
+                if field in data:
+                    return str(data[field]).upper()
+        except:
+            pass
+
+        # Fallback: regex pattern for "field": "value" or field: value
+        patterns = [
+            rf'"{field}":\s*"([^"]+)"',  # JSON with quotes
+            rf'{field}[:\s]+"([^"]+)"',  # Field: "value"
+            rf"{field}[:\s]+([A-Z_]+)",  # Field: VALUE
+        ]
+
+        for pattern in patterns:
+            match = re.search(pattern, text, re.IGNORECASE)
+            if match:
+                return match.group(1).upper()
+
+        return default
+
     def _extract_keywords(self, text: str) -> list:
         """Extract urgency keywords"""
-        urgency_words = ["urgent", "asap", "immediately", "critical", "emergency", "frustrated", "angry"]
+        urgency_words = [
+            "urgent",
+            "asap",
+            "immediately",
+            "critical",
+            "emergency",
+            "frustrated",
+            "angry",
+        ]
         found = [word for word in urgency_words if word.lower() in text.lower()]
         return found[:3]  # Return top 3
-    
+
     def _extract_response(self, text: str) -> str:
         """Extract the generated response from the output"""
         # Look for response section
         lines = text.split("\n")
         response_lines = []
         in_response = False
-        
+
         for line in lines:
-            if "response" in line.lower() or "dear" in line.lower() or "hi" in line.lower():
+            if (
+                "response" in line.lower()
+                or "dear" in line.lower()
+                or "hi" in line.lower()
+            ):
                 in_response = True
-            
+
             if in_response and line.strip():
                 response_lines.append(line)
-        
+
         if response_lines:
             return "\n".join(response_lines[-20:])  # Get last 20 lines as response
-        
+
         return "Thank you for contacting support. We are reviewing your request and will respond shortly."
-    
+
     def _extract_kb_articles(self, text: str) -> list:
         """Extract knowledge base articles mentioned"""
         # Simple extraction of article mentions
         articles = []
         if "article" in text.lower() or "faq" in text.lower():
-            articles.append({
-                "title": "Relevant documentation found",
-                "summary": "Please check our knowledge base for detailed guides"
-            })
+            articles.append(
+                {
+                    "title": "Relevant documentation found",
+                    "summary": "Please check our knowledge base for detailed guides",
+                }
+            )
         return articles
-    
+
     def _extract_quality_score(self, text: str) -> float:
         """Extract quality score from QA review"""
         import re
+
         pattern = r"quality[:\s]+([0-9.]+)"
         match = re.search(pattern, text, re.IGNORECASE)
         if match:
@@ -362,7 +443,91 @@ class CustomerSupportCrew:
             except:
                 pass
         return 0.85  # Default good quality score
-    
+
+    def _normalize_category(self, category: str) -> str:
+        """Normalize category to match TicketCategory enum"""
+        category_mapping = {
+            "SHIPPING": "shipping_delay",
+            "BILLING": "billing_issue",
+            "PRODUCT": "product_defect",
+            "ACCOUNT": "account_access",
+            "TECHNICAL": "technical_support",
+            "REFUND": "refund_request",
+            "GENERAL": "general_inquiry",
+            "OTHER": "other",
+        }
+        return category_mapping.get(category.upper(), "general_inquiry")
+
+    def _normalize_priority(self, priority: str) -> str:
+        """Normalize priority to match TicketPriority enum"""
+        priority_mapping = {
+            "LOW": "low",
+            "MEDIUM": "medium",
+            "HIGH": "high",
+            "CRITICAL": "critical",
+        }
+        return priority_mapping.get(priority.upper(), "medium")
+
+    def _parse_partial_crew_result(
+        self, tasks: list, ticket_context: str
+    ) -> Dict[str, Any]:
+        """
+        Extract results from partially completed tasks when crew fails mid-execution
+        (e.g., due to rate limits)
+        """
+        print(f"   🔍 Extracting results from {len(tasks)} tasks...")
+
+        # Try to extract output from each task
+        triage_output = ""
+        kb_output = ""
+        response_output = ""
+
+        for i, task in enumerate(tasks):
+            try:
+                if hasattr(task, "output") and task.output:
+                    task_str = str(task.output)
+                    print(f"   ✓ Task {i + 1} output: {len(task_str)} chars")
+
+                    if i == 0:  # Triage task
+                        triage_output = task_str
+                    elif i == 1:  # KB task
+                        kb_output = task_str
+                    elif i == 2:  # Response task
+                        response_output = task_str
+                else:
+                    print(f"   ✗ Task {i + 1} has no output")
+            except Exception as e:
+                print(f"   ⚠️  Error reading task {i + 1}: {e}")
+
+        # If we got a response from task 3, use it
+        if response_output:
+            print(f"   ✅ Using response from Response Agent")
+            suggested_reply = self._extract_response(response_output)
+        else:
+            print(f"   ⚠️  No response found, using fallback")
+            suggested_reply = "Thank you for contacting us. We have received your request and will respond shortly."
+
+        # Build structured result from available data
+        return {
+            "category": self._normalize_category(
+                self._extract_value(triage_output, "category", "GENERAL")
+            ),
+            "priority": self._normalize_priority(
+                self._extract_value(triage_output, "priority", "MEDIUM")
+            ),
+            "sentiment": self._extract_value(
+                triage_output, "sentiment", "neutral"
+            ).lower(),
+            "urgency_keywords": self._extract_keywords(triage_output),
+            "extracted_info": {},
+            "confidence": 0.75,  # Lower confidence for partial results
+            "reasoning": "Partial multi-agent analysis (crew interrupted)",
+            "suggested_reply": suggested_reply,
+            "kb_articles": self._extract_kb_articles(kb_output),
+            "quality_score": 0.75,  # No QA review, estimate quality
+            "crew_output": f"Triage: {triage_output[:200]}... | Response: {response_output[:200]}...",
+        }
+
     def _fallback_response(self) -> Dict[str, Any]:
         """Fallback response when CrewAI is unavailable"""
         return {
@@ -375,7 +540,7 @@ class CustomerSupportCrew:
             "reasoning": "CrewAI unavailable - using fallback classification",
             "suggested_reply": "Thank you for contacting us. We have received your request and will respond shortly.",
             "kb_articles": [],
-            "quality_score": 0.0
+            "quality_score": 0.0,
         }
 
 
@@ -383,7 +548,7 @@ class CustomerSupportCrew:
 def test_crewai_service():
     """Test the CrewAI service with a sample ticket"""
     crew_service = CustomerSupportCrew()
-    
+
     test_ticket = {
         "subject": "Order not delivered - URGENT",
         "description": """
@@ -394,26 +559,26 @@ def test_crewai_service():
         "metadata": {
             "order_id": "12345",
             "customer_name": "John Doe",
-            "customer_email": "john@example.com"
-        }
+            "customer_email": "john@example.com",
+        },
     }
-    
+
     result = crew_service.process_ticket(
         subject=test_ticket["subject"],
         description=test_ticket["description"],
-        metadata=test_ticket["metadata"]
+        metadata=test_ticket["metadata"],
     )
-    
-    print("\n" + "="*80)
+
+    print("\n" + "=" * 80)
     print("CREWAI PROCESSING RESULT")
-    print("="*80)
+    print("=" * 80)
     print(f"Category: {result['category']}")
     print(f"Priority: {result['priority']}")
     print(f"Sentiment: {result['sentiment']}")
     print(f"Confidence: {result['confidence']}")
     print(f"Quality Score: {result['quality_score']}")
     print(f"\nSuggested Reply:\n{result['suggested_reply']}")
-    print("="*80)
+    print("=" * 80)
 
 
 if __name__ == "__main__":

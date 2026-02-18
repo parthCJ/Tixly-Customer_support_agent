@@ -112,11 +112,17 @@ export default function MyTicketsPage() {
           <div className="flex-1">
             <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2 flex-wrap">
               <span className="text-[10px] sm:text-xs font-mono text-gray-500 tracking-tight">{ticket.ticket_id}</span>
-              <Badge variant={getPriorityColor((ticket.ai_classification?.priority || ticket.priority) as string)} size="sm">
-                {ticket.ai_classification?.priority || ticket.priority || 'medium'}
+              <Badge
+                variant={getPriorityColor((ticket.ai_suggested_priority || ticket.priority) as string)}
+                size="sm"
+              >
+                {ticket.ai_suggested_priority || ticket.priority || 'medium'}
               </Badge>
-              <Badge variant={getCategoryColor((ticket.ai_classification?.category || ticket.category) as string)} size="sm">
-                {ticket.ai_classification?.category || ticket.category || 'general_inquiry'}
+              <Badge
+                variant={getCategoryColor((ticket.ai_suggested_category || ticket.category) as string)}
+                size="sm"
+              >
+                {ticket.ai_suggested_category || ticket.category || 'general_inquiry'}
               </Badge>
             </div>
             <h3 className="font-semibold text-sm sm:text-base text-gray-900 dark:text-white mb-1">
@@ -139,7 +145,7 @@ export default function MyTicketsPage() {
           </div>
         </div>
 
-        {ticket.ai_classification?.suggested_reply && (
+        {ticket.ai_suggested_reply && (
           <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-2 sm:p-3 mb-2 sm:mb-3">
             <div className="flex items-start gap-2">
               <MessageSquare className="h-3 sm:h-4 w-3 sm:w-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
@@ -148,7 +154,7 @@ export default function MyTicketsPage() {
                   AI Suggested Reply
                 </p>
                 <p className="text-[10px] sm:text-xs text-blue-800 dark:text-blue-400 line-clamp-3">
-                  {ticket.ai_classification.suggested_reply}
+                  {ticket.ai_suggested_reply}
                 </p>
               </div>
             </div>

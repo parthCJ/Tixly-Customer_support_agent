@@ -3,31 +3,33 @@
 # Web Framework
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
-pydantic>=2.7.4,<3.0.0
-pydantic-settings>=2.1.0
+pydantic~=2.11.9  # Match crewai requirements
+pydantic-settings~=2.10.1  # Match crewai requirements
 
 # Database (we'll add this later)
 # sqlalchemy==2.0.23
 # alembic==1.12.1
 
-# AI/ML Libraries (we'll add these in next phases)
-# langchain==0.0.335
-# langchain-groq==0.0.1
-# chromadb==0.4.18
-# sentence-transformers==2.2.2
-
 # AI/LLM
-groq==0.11.0
-httpx==0.27.0
-
+groq>=0.30.0,<1.0.0  # Match langchain-groq requirements
+openai>=1.0.0  # For OpenRouter API
+httpx>=0.27.0
+    
 # CrewAI Multi-Agent Framework
 crewai>=0.86.0
 crewai-tools>=0.17.0
 langchain-groq>=0.2.1
+langchain-openai>=0.2.0  # For OpenRouter with CrewAI
 
 # Vector Database & Embeddings (Phase 3 - RAG)
-chromadb>=0.5.18
+chromadb~=1.1.0  # Match crewai requirements
 sentence-transformers==2.3.1
+
+# Legacy dependencies (commented out - now using newer versions above)
+# langchain==0.0.335
+# langchain-groq==0.0.1
+# chromadb==0.4.18
+# sentence-transformers==2.2.2
 
 # ML/Forecasting (Phase 4 - LSTM)
 tensorflow==2.15.0
@@ -36,6 +38,6 @@ scikit-learn==1.3.2
 numpy>=1.22.0,<2.0  # Compatible with ChromaDB 0.5.x and TensorFlow
 
 # Utilities
-python-dotenv==1.0.0
-python-multipart==0.0.6
+python-dotenv~=1.1.1  # Match crewai requirements
+python-multipart>=0.0.9  # Updated for mcp compatibility
 email-validator==2.1.1  # For Pydantic EmailStr validation

@@ -1,0 +1,11 @@
+# Heavy Dependencies - Install After requirements-fast.txt
+# These have complex dependency trees
+
+# Vector Database & Embeddings
+sentence-transformers==2.3.1
+chromadb>=0.5.18
+
+# CrewAI Multi-Agent Framework
+crewai>=0.86.0
+crewai-tools>=0.17.0
+langchain-groq>=0.2.1

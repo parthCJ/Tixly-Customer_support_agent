@@ -531,8 +531,8 @@ class CustomerSupportCrew:
     def _fallback_response(self) -> Dict[str, Any]:
         """Fallback response when CrewAI is unavailable"""
         return {
-            "category": "GENERAL",
-            "priority": "MEDIUM",
+            "category": "general_inquiry",
+            "priority": "medium",
             "sentiment": "neutral",
             "urgency_keywords": [],
             "extracted_info": {},

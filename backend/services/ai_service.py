@@ -107,30 +107,8 @@ class TicketAIService:
             )
 
         try:
-            # If no KB context provided, search for it
-            if kb_context is None:
-                from .kb_service import search_knowledge_base
-
-                # Search KB for relevant articles
-                kb_articles = search_knowledge_base(
-                    subject=ticket_data.get("subject", ""),
-                    description=ticket_data.get("description", ""),
-                    category=ticket_data.get("category"),
-                    n_results=2,  # Get top 2 most relevant articles
-                )
-
-                # Format KB context
-                if kb_articles:
-                    kb_context = "\n\n".join(
-                        [
-                            f"KB Article: {article['title']}\n{article['content'][:500]}..."
-                            for article in kb_articles
-                            if article["relevance_score"]
-                            > 0.5  # Only use if relevant enough
-                        ]
-                    )
-
             # Build reply generation prompt
+            # Note: kb_context should be provided by the caller if KB search is needed
             prompt = self._build_reply_prompt(ticket_data, kb_context)
 
             response = self.client.chat.completions.create(
@@ -277,8 +255,8 @@ Do not include a signature or greeting (that will be added automatically).
     def _fallback_classification(self) -> Dict[str, Any]:
         """Fallback classification when AI is unavailable"""
         return {
-            "category": "GENERAL",
-            "priority": "MEDIUM",
+            "category": "general_inquiry",
+            "priority": "medium",
             "sentiment": "neutral",
             "urgency_keywords": [],
             "extracted_info": {},

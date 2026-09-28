@@ -14,7 +14,7 @@ from ..models.agent import (
     AgentStats, 
     AgentStatus,
     AgentAssignmentResponse
-)
+)     
 from ..models.ticket import TicketCategory
 
 router = APIRouter(prefix="/api/agents", tags=["agents"])

@@ -18,7 +18,7 @@ export default function Logo({ size = 75, className = '' }: LogoProps) {
         priority
       />
     </div>
-  );
+  );    
 }
 
 // Alternative compact version for small spaces (just the ticket icon)

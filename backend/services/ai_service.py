@@ -24,7 +24,7 @@ class TicketAIService:
             self.client = None
         else:
             self.client = Groq(api_key=self.api_key)
-            self.model = "llama-3.3-70b-versatile"  # Updated model (Nov 2024)
+            self.model = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
     
     def classify_ticket(self, subject: str, description: str, metadata: Dict[str, Any] = None) -> Dict[str, Any]:
         """

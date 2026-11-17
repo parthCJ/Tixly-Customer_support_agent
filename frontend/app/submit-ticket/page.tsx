@@ -370,7 +370,7 @@ export default function SubmitTicketPage() {
 
         {/* Footer */}
         <p className="text-center text-xs sm:text-sm text-gray-500 mt-4 sm:mt-6">
-          Powered by AI • Groq LLaMA 3.1 70B
+          Powered by AI • Groq
         </p>
       </div>
     </div>

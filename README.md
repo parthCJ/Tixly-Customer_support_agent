@@ -22,7 +22,7 @@ AI-powered customer support ticket management system with automated classificati
 **Backend**
 - FastAPI
 - Python 3.11
-- Groq API (LLaMA 3.1 70B)
+- Groq API (Llama 3.1 8B Instant)
 - ChromaDB (Vector Database)
 - TensorFlow (LSTM)
 
@@ -49,6 +49,8 @@ pip install -r requirements.txt
 
 # Add your Groq API key to .env
 echo "GROQ_API_KEY=your_key_here" > .env
+# Optional: override the default Groq model
+# echo "GROQ_MODEL=llama-3.1-8b-instant" >> .env
 
 # Initialize knowledge base
 python data/sample_kb_articles.py
